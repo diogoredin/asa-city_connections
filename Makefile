@@ -19,11 +19,10 @@ else
 endif
 
 # Specific flags
-CCFLAGS = $(CFLAGS) -std=c89
 CXFLAGS = $(CFLAGS)
 
 # Executables
-EXEC_PROJ	 = $(OBJDIR)/proj
+EXEC_PROJ = $(OBJDIR)/proj
 EXECS = $(EXEC_PROJ)
 
 # General rules (point to main focus files)
