@@ -62,6 +62,10 @@ class Graph {
 		~Graph();
 		void sort();
 		void connect(Vertex a, Vertex b);
+
+		int& operator[](size_t idx) {
+			return _airport_cost[idx];
+		}
 		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
 };
 
@@ -116,7 +120,10 @@ int main(void) {
 	// Get Cost of each Airport (city, cost)
 	get_numbers(&num_airports);
 	while ( --num_airports > 0 ) {
-		// TODO: Create airports
+		int city, cost;
+		get_numbers(&city, &cost);
+
+		g[city] = cost;
 	}
 
 	// Get Cost of each Road (city_a, city_b, cost)
