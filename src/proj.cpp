@@ -22,7 +22,6 @@ void get_numbers(int *a, int *b, int *c) {
 /*********************** Visit States & Graph Status **************************/
 enum graphStatus {
 	CORRECT = 0,
-	INCOHERENT,
 	INSUFFICIENT
 };
 
@@ -112,9 +111,6 @@ void Graph::connect(Vertex a, Vertex b) {
 /* Examines Graph */
 std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 	switch ( graph._status ) {
-		case INCOHERENT:
-			return os << "Incoerente";
-
 		case INSUFFICIENT:
 			return os << "Insuficiente";
 
