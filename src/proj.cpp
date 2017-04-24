@@ -119,7 +119,7 @@ int main(void) {
 
 	// Get Cost of each Airport (city, cost)
 	get_numbers(&num_airports);
-	while ( --num_airports > 0 ) {
+	while ( num_airports-- > 0 ) {
 		int city, cost;
 		get_numbers(&city, &cost);
 
@@ -128,8 +128,8 @@ int main(void) {
 
 	// Get Cost of each Road (city_a, city_b, cost)
 	get_numbers(&num_roads);
-	while ( --num_roads > 0 ) {
 		// TODO: Create roads
+	while ( num_roads-- > 0 ) {
 	}
 
 	g.sort();
