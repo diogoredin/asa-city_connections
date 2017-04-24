@@ -9,8 +9,15 @@
 #include <vector>
 
 /*************************** Auxiliary functions ******************************/
-#define get_numbers(a, b) scanf("%d %d", a, b)
-#define get_number(a) scanf("%d", a)
+void get_numbers(int *a) {
+	scanf("%d", a);
+}
+void get_numbers(int *a, int *b) {
+	scanf("%d %d", a, b);
+}
+void get_numbers(int *a, int *b, int *c) {
+	scanf("%d %d %d", a, b, c);
+}
 
 /*********************** Visit States & Graph Status **************************/
 enum graphStatus {
@@ -155,27 +162,21 @@ void Graph::sort() {
 /***************************** MAIN function **********************************/
 int main(void) {
 
-	int num_c, num_a, num_e;
+	int num_cities, num_airports, num_roads;
 
-	// Number of Cities
-	get_number(&num_c);
-
-	// Number of Airports
-	get_number(&num_a);
+	get_numbers(&num_cities);
+	get_numbers(&num_airports);
 
 	// Get Cost of each Airport (city, cost)
-	while ( num_a > 0 ) {
-		//std::cout << num_a;
-		//num_a--;
+	while ( --num_airports > 0 ) {
+		// TODO: Create airports
 	}
 
-	// Number of Roads
-	get_number(&num_e);
+	get_numbers(&num_roads);
 
 	// Number of each Road (cost, city_a, city_b)
-	while ( num_e > 0 ) {
-		//std::cout << num_e;
-		//num_e--;
+	while ( --num_roads > 0 ) {
+		// TODO: Create roads
 	}
 
 	return 0;
