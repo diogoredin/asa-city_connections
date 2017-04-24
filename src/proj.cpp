@@ -120,7 +120,8 @@ int main(void) {
 	// Get Cost of each Airport (city, cost)
 	get_numbers(&num_airports);
 	while ( num_airports-- > 0 ) {
-		int city, cost;
+		Vertex city;
+		int cost;
 		get_numbers(&city, &cost);
 
 		g[city] = cost;
