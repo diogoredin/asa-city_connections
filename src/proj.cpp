@@ -169,9 +169,5 @@ int main(void) {
 		printf("1 road");
 	}
 
-	Graph g(num_v, num_e);
-	g.sort();
-	std::cout << g << std::endl;
-
 	return 0;
 }
