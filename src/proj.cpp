@@ -45,18 +45,20 @@ std::vector<Vertex> queue;
 /* Graph Structure */
 class Graph {
 	private:
-		int _nr_edges;
 		unsigned char _status;
+		int _nr_edges;
+		int _totalCost;
+		int _finalRoads, _finalAirports;
 
 		std::vector<Edge> _first;    /* _first[Vertex] = Edge   */
 		std::vector<Vertex> _vertex; /* _vertex[Edge]  = Vertex */
 		std::vector<Edge> _next;     /* _next[Edge]    = Edge   */
 
-		std::vector<int> _indegree;
-		std::vector<Vertex> _result;
+		std::vector<int> _airportCost; /* _airportCost[Vertex] = (int) cost */
+		std::vector<int> _roadCost;    /* _roadCost[Edge]      = (int) cost */
 
 	public:
-		Graph(int num_v, int num_e);
+		Graph(int num_vertices);
 		~Graph();
 		void sort();
 		void connect(Vertex a, Vertex b);
@@ -66,13 +68,13 @@ class Graph {
 Graph::Graph(int num_vertices) {
 	// TODO
 	_status = INSUFFICIENT;
+	_first = std::vector<Edge>(num_vertices+1);
 }
 Graph::~Graph() { /* Nothing here */ }
 
 /* Connects two Vertices */
 void Graph::connect(Vertex a, Vertex b) {
 	_vertex[_nr_edges] = new_edge(b);
-	_indegree[b]++;
 
 	if ( _first[a] == 0 ) {
 		_first[a] = _nr_edges;
@@ -91,11 +93,8 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 			return os << "Insuficiente";
 
 		default: {
-			int i, size = graph._result.size() - 1;
-			for ( i = 0; i < size; i++ ) {
-				os << graph._result[i] << " ";
-			}
-			return os << graph._result[i];
+			os << graph._totalCost << std::endl;
+			return os << graph._finalAirports << " " << graph._finalRoads;
 		}
 	}
 }
@@ -111,6 +110,8 @@ int main(void) {
 	int num_cities, num_airports, num_roads;
 
 	get_numbers(&num_cities);
+	Graph g(num_cities);
+
 	get_numbers(&num_airports);
 
 	// Get Cost of each Airport (city, cost)
