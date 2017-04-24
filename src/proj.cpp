@@ -47,15 +47,15 @@ class Graph {
 	private:
 		unsigned char _status;
 		int _nr_edges;
-		int _totalCost;
-		int _finalRoads, _finalAirports;
+		int _total_cost;
+		int _final_roads, _final_airports;
 
 		std::vector<Edge> _first;    /* _first[Vertex] = Edge   */
 		std::vector<Vertex> _vertex; /* _vertex[Edge]  = Vertex */
 		std::vector<Edge> _next;     /* _next[Edge]    = Edge   */
 
-		std::vector<int> _airportCost; /* _airportCost[Vertex] = (int) cost */
-		std::vector<int> _roadCost;    /* _roadCost[Edge]      = (int) cost */
+		std::vector<int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
+		std::vector<int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
 
 	public:
 		Graph(int num_vertices);
@@ -66,8 +66,10 @@ class Graph {
 };
 
 Graph::Graph(int num_vertices) {
+
 	_status = INSUFFICIENT;
-	_first = std::vector<Edge>(num_vertices+1);
+	_first = std::vector<Edge>(num_vertices + 1);
+
 }
 Graph::~Graph() { /* Nothing here */ }
 
@@ -92,8 +94,8 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 			return os << "Insuficiente";
 
 		default: {
-			os << graph._totalCost << std::endl;
-			return os << graph._finalAirports << " " << graph._finalRoads;
+			os << graph._total_cost << std::endl;
+			return os << graph._final_airports << " " << graph._final_roads;
 		}
 	}
 }
@@ -111,16 +113,14 @@ int main(void) {
 	get_numbers(&num_cities);
 	Graph g(num_cities);
 
-	get_numbers(&num_airports);
-
 	// Get Cost of each Airport (city, cost)
+	get_numbers(&num_airports);
 	while ( --num_airports > 0 ) {
 		// TODO: Create airports
 	}
 
+	// Get Cost of each Road (city_a, city_b, cost)
 	get_numbers(&num_roads);
-
-	// Number of each Road (cost, city_a, city_b)
 	while ( --num_roads > 0 ) {
 		// TODO: Create roads
 	}
