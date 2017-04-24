@@ -3,7 +3,6 @@ SRCDIR = src
 OBJDIR = bld
 
 # Compilers
-CC  ?= gcc
 CXX ?= g++
 
 # Shared compilation flags
@@ -38,4 +37,4 @@ proj: $(EXEC_PROJ)
 $(EXEC_PROJ): $(SRCDIR)/proj.cpp
 	$(CXX) $(CXFLAGS) $^ -o $@
 
-.PHONY: all clean debug test valgrind
+.PHONY: all clean
