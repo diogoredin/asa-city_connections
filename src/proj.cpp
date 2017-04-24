@@ -66,7 +66,6 @@ class Graph {
 };
 
 Graph::Graph(int num_vertices) {
-	// TODO
 	_status = INSUFFICIENT;
 	_first = std::vector<Edge>(num_vertices+1);
 }
@@ -125,6 +124,9 @@ int main(void) {
 	while ( --num_roads > 0 ) {
 		// TODO: Create roads
 	}
+
+	g.sort();
+	std::cout << g << std::endl;
 
 	return 0;
 }
