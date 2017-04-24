@@ -10,6 +10,7 @@
 
 /*************************** Auxiliary functions ******************************/
 #define get_numbers(a, b) scanf("%d %d", a, b)
+#define get_number(a) scanf("%d", a)
 
 /*********************** Visit States & Graph Status **************************/
 enum graphStatus {
@@ -153,8 +154,20 @@ void Graph::sort() {
 
 /***************************** MAIN function **********************************/
 int main(void) {
-	int num_v, num_e;
-	get_numbers(&num_v, &num_e);
+
+	int num_c, num_a, num_e;
+	get_number(&num_c);
+	get_number(&num_a);
+
+	for (; num_a < 0; num_a--) {
+		printf("1 Airport");
+	}
+
+	get_number(&num_e);
+
+	for (; num_e < 0; num_e--) {
+		printf("1 road");
+	}
 
 	Graph g(num_v, num_e);
 	g.sort();
