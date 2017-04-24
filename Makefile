@@ -27,7 +27,7 @@ EXEC_PROJ	 = $(OBJDIR)/proj
 EXECS = $(EXEC_PROJ)
 
 # General rules (point to main focus files)
-all: proj2
+all: proj
 
 clean:
 	rm -rf $(EXECS) $(OBJDIR)/*.o $(OBJDIR)/*.dSYM

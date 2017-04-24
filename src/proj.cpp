@@ -156,17 +156,26 @@ void Graph::sort() {
 int main(void) {
 
 	int num_c, num_a, num_e;
+
+	// Number of Cities
 	get_number(&num_c);
+
+	// Number of Airports
 	get_number(&num_a);
 
-	for (; num_a < 0; num_a--) {
-		printf("1 Airport");
+	// Get Cost of each Airport (city, cost)
+	while ( num_a > 0 ) {
+		//std::cout << num_a;
+		//num_a--;
 	}
 
+	// Number of Roads
 	get_number(&num_e);
 
-	for (; num_e < 0; num_e--) {
-		printf("1 road");
+	// Number of each Road (cost, city_a, city_b)
+	while ( num_e > 0 ) {
+		//std::cout << num_e;
+		//num_e--;
 	}
 
 	return 0;
