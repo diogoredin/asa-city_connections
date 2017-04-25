@@ -48,7 +48,6 @@ std::priority_queue<Vertex, std::vector<Vertex>, std::greater<Vertex> > queue;
 class Graph {
 	private:
 		unsigned char _status;
-		int _nr_cities;
 		int _total_cost;
 		int _possible_roads, _possible_airports;
 		int _final_roads, _final_airports;
@@ -69,6 +68,8 @@ class Graph {
 		void sort_airports_cost();
 		void min_span_tree();
 
+		size_t size() const { return _first.size(); }
+
 		int& operator[](size_t idx) {
 			return _airport_cost[idx];
 		}
@@ -79,7 +80,6 @@ class Graph {
 Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
-	_nr_cities = num_vertices;
 	_first = std::vector<Edge>(num_vertices + 1);
 
 }
@@ -110,7 +110,7 @@ void Graph::sort_airports_cost() {
 	// Go through the costs and put them in a priority queue (used in prim's algorithm)
     for ( it = _airport_cost.begin(); it != _airport_cost.end(); it++ )
         queue.push(it->first);
- 
+
 }
 
 /***************************** Prim's Algorithm *********************************/
@@ -120,11 +120,11 @@ void Graph::min_span_tree() {
 	// sort_airports_cost(); and replace c's with the indexes of the sorted array
 
 	// Goes through all adjacent cities (in our case every city is a possibility)
-	for (int c = 1; c <= _nr_cities; c++ ) {
+	for (int c = 1; c < size(); c++ ) {
 
 		// City has no connection decided yet (visited), we haven't reached the limit of roads
 		// or airports, and it's possible to build at least a road or an airport
-		if ( (_first[c] != -1 ) && 
+		if ( (_first[c] != -1 ) &&
 			( _possible_roads > _final_roads || _possible_airports > _final_airports ) &&
 			( _road_cost[c] != -1 || !(_airport_cost[c] == -1 && _airport_cost[c+1] == -1) ) ) {
 
@@ -133,7 +133,7 @@ void Graph::min_span_tree() {
 
 			// Airport doesn't exist and is cheaper than a Road
 			if ( airports_cost < _road_cost[c] ) {
-					
+
 				_total_cost += _airport_cost[c];
 				_final_airports++;
 
@@ -144,7 +144,7 @@ void Graph::min_span_tree() {
 
 			// Airport doesn't exist but a Road is cheaper or the cost is the same
 			else if ( airports_cost > _road_cost[c] || airports_cost > _road_cost[c] ) {
-					
+
 				_total_cost += _road_cost[c];
 				_final_roads++;
 
@@ -155,7 +155,7 @@ void Graph::min_span_tree() {
 
 			// It's connection has been decided!
 			_first[c] = -1;
-		
+
 		}
 
 	}
