@@ -6,6 +6,7 @@
 /* Libraries. Only the bare minimum, no need for clutter */
 #include <stdio.h>
 #include <iostream>
+#include <map>
 #include <vector>
 
 /****************************** auxy functions *********************************/
@@ -55,8 +56,10 @@ class Graph {
 		std::vector<Vertex> _vertex; 	/* _vertex[Edge]  = Vertex */
 		std::vector<Edge> 	_next;     	/* _next[Edge]    = Edge   */
 
-		std::vector<int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
-		std::vector<int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
+		// TODO: Main structure for our data
+
+		std::map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
+		std::map<Edge,   int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
 
 	public:
 		Graph(int num_vertices);
@@ -91,6 +94,9 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 		}
 	}
 }
+
+/************************ Algorithm-based functions ***************************/
+// TODO
 
 /**************************** Merge Sort Algorithm *******************************/
 /* DIDN'T WORK IN C++ */
@@ -163,10 +169,15 @@ int main(void) {
 
 	// Get Cost of each Road (city_a, city_b, cost)
 	get_numbers(&num_roads);
-		// TODO: Create roads
 	while ( num_roads-- > 0 ) {
+		Vertex a, b;
+		int cost;
+		get_numbers(&a, &b, &cost);
+
+		g.connect(a, b, cost);
 	}
 
+	// TODO: apply algorithms
 	g.min_span_tree();
 	std::cout << g << std::endl;
 
