@@ -6,6 +6,7 @@
 /* Libraries. Only the bare minimum, no need for clutter */
 #include <stdio.h>
 #include <iostream>
+#include <algorithm>
 #include <list>
 #include <map>
 #include <queue>
@@ -82,6 +83,7 @@ class Graph {
 		/* Operator overrides */
 		int& operator[](Vertex city) { return _airport_cost[city]; }
 		int& operator[](Edge road)   { return _road_cost[road]; }
+		//friend bool operator<(Vertex a, Vertex b) { return cost_airport(a) > cost_airport(b); }
 		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
 
 		/* Magic methods */
@@ -115,18 +117,28 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 void Graph::sort_airports_cost() {
 
 	/* Define our iterator */
-	std::map<Vertex, int>::iterator it;
+	std::map<Vertex, int>::iterator city;
 
-	/* Go through the costs and put them in a priority queue (used in prim's algorithm) */
-    for ( it = _airport_cost.begin(); it != _airport_cost.end(); it++ ) {
-        queue.push(it->first);
+	/* Vector of results */
+	std::vector<Vertex> airports(size());
+
+	/* Sort airports by cost (greedy approach) */
+	int index = 0;
+    for ( city = _airport_cost.begin(); city != _airport_cost.end(); city++, index++ ) {
+		airports[index] = city->second;
 	}
+
+	std::sort( airports.begin(), airports.end() );
 
 }
 
 /***************************** Prim's Algorithm *********************************/
 void Graph::min_span_tree() {
-	// TODO: Redo this algorithm with the new data structure
+
+    //for ( city = _cities.begin(); city != _cities.end(); _cities++ ) {
+		//std::cout << cost_airport(city->first) << std::endl;
+	//}
+
 }
 
 /***************************** MAIN function **********************************/
@@ -137,8 +149,10 @@ int main(void) {
 	get_numbers(&num_cities);
 	Graph g(num_cities);
 
-	/* Get Cost of each Airport (city, cost) */
+	/* Get number of possible Airports */
 	get_numbers(&num_airports);
+
+	/* Get Cost of each Airport (city, cost) */
 	while ( num_airports-- > 0 ) {
 		int a;
 		int cost;
@@ -148,8 +162,10 @@ int main(void) {
 		g[city] = cost;
 	}
 
-	/* Get Cost of each Road (city_a, city_b, cost) */
+	/* Get number of possible roads */
 	get_numbers(&num_roads);
+
+	/* Get Cost of each Road (city_a, city_b, cost) */
 	while ( num_roads-- > 0 ) {
 		int a, b;
 		int cost;
@@ -160,6 +176,7 @@ int main(void) {
 	}
 
 	// TODO: apply algorithms
+	g.sort_airports_cost();
 	g.min_span_tree();
 	std::cout << g << std::endl;
 
