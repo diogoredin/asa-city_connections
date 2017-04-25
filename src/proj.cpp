@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-/*************************** Auxiliary functions ******************************/
+/****************************** auxy functions *********************************/
 void get_numbers(int *a) {
 	scanf("%d", a);
 }
@@ -46,13 +46,14 @@ std::vector<Vertex> queue;
 class Graph {
 	private:
 		unsigned char _status;
-		int _nr_edges;
+		int _nr_cities;
 		int _total_cost;
+		int _possible_roads, _possible_airports;
 		int _final_roads, _final_airports;
 
-		std::vector<Edge> _first;    /* _first[Vertex] = Edge   */
-		std::vector<Vertex> _vertex; /* _vertex[Edge]  = Vertex */
-		std::vector<Edge> _next;     /* _next[Edge]    = Edge   */
+		std::vector<Edge> 	_first;    	/* _first[Vertex] = Edge   */
+		std::vector<Vertex> _vertex; 	/* _vertex[Edge]  = Vertex */
+		std::vector<Edge> 	_next;     	/* _next[Edge]    = Edge   */
 
 		std::vector<int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
 		std::vector<int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
@@ -60,8 +61,7 @@ class Graph {
 	public:
 		Graph(int num_vertices);
 		~Graph();
-		void sort();
-		void connect(Vertex a, Vertex b);
+		void min_span_tree();
 
 		int& operator[](size_t idx) {
 			return _airport_cost[idx];
@@ -69,27 +69,15 @@ class Graph {
 		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
 };
 
+/* Builds Graph */
 Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
+	_nr_cities = num_vertices;
 	_first = std::vector<Edge>(num_vertices + 1);
 
 }
 Graph::~Graph() { /* Nothing here */ }
-
-/* Connects two Vertices */
-void Graph::connect(Vertex a, Vertex b) {
-	_vertex[_nr_edges] = new_edge(b);
-
-	if ( _first[a] == 0 ) {
-		_first[a] = _nr_edges;
-	} else {
-		Edge find_edge = _first[a];
-
-		for ( ; _next[find_edge] != 0; find_edge = _next[find_edge] );
-		_next[find_edge] = _nr_edges;
-	}
-}
 
 /* Examines Graph */
 std::ostream& operator<<(std::ostream& os, const Graph &graph) {
@@ -104,9 +92,55 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 	}
 }
 
-/************************* Vertex "Deletion" Algorithm ***************************/
-void Graph::sort() {
-	// TODO
+/**************************** Merge Sort Algorithm *******************************/
+/* DIDN'T WORK IN C++ */
+
+/***************************** Prim's Algorithm *********************************/
+
+/******************* Finds Minimum Spanning Tree of Graph **********************/
+void Graph::min_span_tree() {
+
+	// Goes through all Cities
+	for (int c = 1; c <= _nr_cities; c++ ) {
+
+		// City has no connection decided yet (visited), we haven't reached the limit of roads
+		// or airports, and it's possible to build at least a road or an airport
+		if ( (_first[c] != -1 ) && 
+			( _possible_roads > _final_roads || _possible_airports > _final_airports ) &&
+			( _road_cost[c] != -1 || !(_airport_cost[c] == -1 && _airport_cost[c+1] == -1) ) ) {
+
+			// Total Cost (a -> b)
+			int airports_cost = _airport_cost[c] + _airport_cost[c+1];
+
+			// Airport doesn't exist and is cheaper than a Road
+			if ( airports_cost < _road_cost[c] ) {
+					
+				_total_cost += _airport_cost[c];
+				_final_airports++;
+
+				_airport_cost[c] = 0;
+				_airport_cost[c+1] = 0;
+
+			}
+
+			// Airport doesn't exist but a Road is cheaper or the cost is the same
+			else if ( airports_cost > _road_cost[c] || airports_cost > _road_cost[c] ) {
+					
+				_total_cost += _road_cost[c];
+				_final_roads++;
+
+				_road_cost[c] = 0;
+				_road_cost[c+1] = 0;
+
+			}
+
+			// It's connection has been decided!
+			_first[c] = -1;
+		
+		}
+
+	}
+
 }
 
 /***************************** MAIN function **********************************/
@@ -133,7 +167,7 @@ int main(void) {
 	while ( num_roads-- > 0 ) {
 	}
 
-	g.sort();
+	g.min_span_tree();
 	std::cout << g << std::endl;
 
 	return 0;
