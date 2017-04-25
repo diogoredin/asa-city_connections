@@ -64,6 +64,8 @@ class Graph {
 	public:
 		Graph(int num_vertices);
 		~Graph();
+
+		void sort_airports_cost();
 		void min_span_tree();
 
 		int& operator[](size_t idx) {
@@ -95,15 +97,33 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 	}
 }
 
-/************************ Algorithm-based functions ***************************/
-// TODO
+/************************** Algorithm-based functions *****************************/
 
-/**************************** Merge Sort Algorithm *******************************/
-/* DIDN'T WORK IN C++ */
+/****************************** Sort Algorithm ***********************************/
+/* Can we use Sort???? FIX-ME */
+
+void Graph::sort_airports_cost() {
+
+	// Initialize Index
+	//std::vector<pair <int,int>>a idx(_airport_cost.size());
+
+	// Compare the Values
+	//vector<pair<int,int> > a;
+
+	//for ( i = 0; i < n; i++ ) {
+		//cin >> k;
+		//a.push_back (make_pair (k,i)); // k = value, i = original index
+	//}
+
+	//sort( a.begin(), a.end() );
+
+	//for (i = 0 ; i < n ; i++){
+		//cout << a[i].first << " " << a[i].second << "\n";
+	//}
+
+}
 
 /***************************** Prim's Algorithm *********************************/
-
-/******************* Finds Minimum Spanning Tree of Graph **********************/
 void Graph::min_span_tree() {
 
 	// Goes through all Cities
@@ -173,8 +193,6 @@ int main(void) {
 		Vertex a, b;
 		int cost;
 		get_numbers(&a, &b, &cost);
-
-		g.connect(a, b, cost);
 	}
 
 	// TODO: apply algorithms
