@@ -1,5 +1,5 @@
 # Specific files
-bld/proj*
+bld/*proj*
 
 # Test files
 *.outhyp
