@@ -30,13 +30,13 @@ enum graphStatus {
 /******************** Data structures and their "methods" *********************/
 
 /* Vertex Structure */
-typedef int Vertex;
-#define new_vertex(a) a
+typedef size_t Vertex;
+Vertex new_vertex(int val) { return val; }
 #define next_vertex(a) a + 1
 
 /* Edge Structure */
-typedef int Edge;
-#define new_edge(a) a
+typedef size_t Edge;
+Edge new_edge(int val) { return val; }
 
 /* Global queue */
 std::priority_queue<Vertex, std::vector<Vertex>, std::greater<Vertex> > queue;
@@ -59,7 +59,7 @@ class Graph {
 		// TODO: Main structure for our data
 
 		std::map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
-		std::map<Edge,   int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
+		std::map<Edge, int>   _road_cost;    /* _road_cost[Edge]      = (int) cost */
 
 	public:
 		Graph(int num_vertices);
@@ -96,10 +96,7 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 	}
 }
 
-/************************** Algorithm-based functions *****************************/
-
 /****************************** Sort Algorithm ***********************************/
-
 void Graph::sort_airports_cost() {
 
 	// Define our iterator
@@ -119,11 +116,11 @@ void Graph::min_span_tree() {
 	// sort_airports_cost(); and replace c's with the indexes of the sorted array
 
 	// Goes through all adjacent cities (in our case every city is a possibility)
-	for (int c = 1; c < size(); c++ ) {
+	for (Vertex c = 1; c < size(); c = next_vertex(c) ) {
 
 		// City has no connection decided yet (visited), we haven't reached the limit of roads
 		// or airports, and it's possible to build at least a road or an airport
-		if ( (_first[c] != -1 ) &&
+		if ( (_first[c] != 0 ) &&
 			( _possible_roads > _final_roads || _possible_airports > _final_airports ) &&
 			( _road_cost[c] != -1 || !(_airport_cost[c] == -1 && _airport_cost[c+1] == -1) )
 		) {
@@ -153,8 +150,8 @@ void Graph::min_span_tree() {
 
 			}
 
-			// It's connection has been decided!
-			_first[c] = -1;
+			// Its connection has been decided!
+			_first[c] = 0;
 
 		}
 
@@ -173,19 +170,23 @@ int main(void) {
 	// Get Cost of each Airport (city, cost)
 	get_numbers(&num_airports);
 	while ( num_airports-- > 0 ) {
-		Vertex city;
+		int a;
 		int cost;
-		get_numbers(&city, &cost);
+		get_numbers(&a, &cost);
 
+		Vertex city = new_vertex(a);
 		g[city] = cost;
 	}
 
 	// Get Cost of each Road (city_a, city_b, cost)
 	get_numbers(&num_roads);
 	while ( num_roads-- > 0 ) {
-		Vertex a, b;
+		int a, b;
 		int cost;
 		get_numbers(&a, &b, &cost);
+
+		Vertex city_a = new_vertex(a), city_b = new_vertex(b);
+		// TODO: what do?
 	}
 
 	// TODO: apply algorithms
