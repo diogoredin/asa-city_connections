@@ -118,7 +118,7 @@ void Graph::sort_airports_cost() {
 void Graph::min_span_tree() {
 
 	// Sort the costs indexes
-	// sort_airports_cost(); and replace c's with the indexes of the 
+	// sort_airports_cost(); and replace c's with the indexes of the sorted array
 
 	// Goes through all Cities
 	for (int c = 1; c <= _nr_cities; c++ ) {
