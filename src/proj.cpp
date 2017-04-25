@@ -70,9 +70,7 @@ class Graph {
 
 		size_t size() const { return _first.size(); }
 
-		int& operator[](size_t idx) {
-			return _airport_cost[idx];
-		}
+		int& operator[](size_t idx) { return _airport_cost[idx]; }
 		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
 };
 
@@ -108,8 +106,9 @@ void Graph::sort_airports_cost() {
 	std::map<Vertex, int>::iterator it;
 
 	// Go through the costs and put them in a priority queue (used in prim's algorithm)
-    for ( it = _airport_cost.begin(); it != _airport_cost.end(); it++ )
+    for ( it = _airport_cost.begin(); it != _airport_cost.end(); it++ ) {
         queue.push(it->first);
+	}
 
 }
 
@@ -126,7 +125,8 @@ void Graph::min_span_tree() {
 		// or airports, and it's possible to build at least a road or an airport
 		if ( (_first[c] != -1 ) &&
 			( _possible_roads > _final_roads || _possible_airports > _final_airports ) &&
-			( _road_cost[c] != -1 || !(_airport_cost[c] == -1 && _airport_cost[c+1] == -1) ) ) {
+			( _road_cost[c] != -1 || !(_airport_cost[c] == -1 && _airport_cost[c+1] == -1) )
+		) {
 
 			// Total Cost (a -> b)
 			int airports_cost = _airport_cost[c] + _airport_cost[c+1];
