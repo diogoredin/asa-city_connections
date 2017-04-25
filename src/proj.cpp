@@ -6,6 +6,7 @@
 /* Libraries. Only the bare minimum, no need for clutter */
 #include <stdio.h>
 #include <iostream>
+#include <map>
 #include <vector>
 
 /*************************** Auxiliary functions ******************************/
@@ -46,22 +47,18 @@ std::vector<Vertex> queue;
 class Graph {
 	private:
 		unsigned char _status;
-		int _nr_edges;
 		int _total_cost;
 		int _final_roads, _final_airports;
 
-		std::vector<Edge> _first;    /* _first[Vertex] = Edge   */
-		std::vector<Vertex> _vertex; /* _vertex[Edge]  = Vertex */
-		std::vector<Edge> _next;     /* _next[Edge]    = Edge   */
+		// TODO: Main structure for our data
 
-		std::vector<int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
-		std::vector<int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
+		std::map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
+		std::map<Edge,   int> _road_cost;    /* _road_cost[Edge]      = (int) cost */
 
 	public:
 		Graph(int num_vertices);
 		~Graph();
-		void sort();
-		void connect(Vertex a, Vertex b);
+		void connect(Vertex a, Vertex b, int cost);
 
 		int& operator[](size_t idx) {
 			return _airport_cost[idx];
@@ -72,23 +69,13 @@ class Graph {
 Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
-	_first = std::vector<Edge>(num_vertices + 1);
 
 }
 Graph::~Graph() { /* Nothing here */ }
 
 /* Connects two Vertices */
-void Graph::connect(Vertex a, Vertex b) {
-	_vertex[_nr_edges] = new_edge(b);
-
-	if ( _first[a] == 0 ) {
-		_first[a] = _nr_edges;
-	} else {
-		Edge find_edge = _first[a];
-
-		for ( ; _next[find_edge] != 0; find_edge = _next[find_edge] );
-		_next[find_edge] = _nr_edges;
-	}
+void Graph::connect(Vertex a, Vertex b, int cost) {
+	// TODO: depends on our data structure
 }
 
 /* Examines Graph */
@@ -104,10 +91,8 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 	}
 }
 
-/************************* Vertex "Deletion" Algorithm ***************************/
-void Graph::sort() {
-	// TODO
-}
+/************************ Algorithm-based functions ***************************/
+// TODO
 
 /***************************** MAIN function **********************************/
 int main(void) {
@@ -129,11 +114,15 @@ int main(void) {
 
 	// Get Cost of each Road (city_a, city_b, cost)
 	get_numbers(&num_roads);
-		// TODO: Create roads
 	while ( num_roads-- > 0 ) {
+		Vertex a, b;
+		int cost;
+		get_numbers(&a, &b, &cost);
+
+		g.connect(a, b, cost);
 	}
 
-	g.sort();
+	// TODO: apply algorithms
 	std::cout << g << std::endl;
 
 	return 0;
