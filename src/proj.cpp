@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <map>
+#include <queue>
 #include <vector>
 
 /****************************** auxy functions *********************************/
@@ -38,7 +39,7 @@ typedef int Edge;
 #define new_edge(a) a
 
 /* Global queue */
-std::vector<Vertex> queue;
+std::priority_queue<Vertex, std::vector<Vertex>, std::greater<Vertex> > queue;
 #define enqueue(a) queue.push_back(a)
 #define dequeue()  queue.back(); queue.pop_back()
 #define is_empty() queue.empty()
@@ -103,15 +104,13 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 
 void Graph::sort_airports_cost() {
 
-	// IDEA (nao implemento pq nao consigo)
-	// (1) Percorrer a array com os custos dos aeroportos
-	// (2) Ordenar a array original [200,100,400,300]
-	// (3) Obter os indices da array original mas ordenada ou seja 2,1,4,3
-	// Utilizar esses indices para aceder ao _first[c] na funcao em baixo sendo q
-	// os c's sao os que acabamos de calcular
-	// podemos implementar um algoritmo ordenacao (nlogn) e assim ficamos com
-	// tempo n + nlogn pq no algoritmo de prim temos um for (n)
+	// Define our iterator
+	std::map<Vertex, int>::iterator it;
 
+	// Go through the costs and put them in a priority queue (used in prim's algorithm)
+    for ( it = _airport_cost.begin(); it != _airport_cost.end(); it++ )
+        queue.push(it->first);
+ 
 }
 
 /***************************** Prim's Algorithm *********************************/
@@ -120,7 +119,7 @@ void Graph::min_span_tree() {
 	// Sort the costs indexes
 	// sort_airports_cost(); and replace c's with the indexes of the sorted array
 
-	// Goes through all Cities
+	// Goes through all adjacent cities (in our case every city is a possibility)
 	for (int c = 1; c <= _nr_cities; c++ ) {
 
 		// City has no connection decided yet (visited), we haven't reached the limit of roads
