@@ -100,31 +100,25 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 /************************** Algorithm-based functions *****************************/
 
 /****************************** Sort Algorithm ***********************************/
-/* Can we use Sort???? FIX-ME */
 
 void Graph::sort_airports_cost() {
 
-	// Initialize Index
-	//std::vector<pair <int,int>>a idx(_airport_cost.size());
-
-	// Compare the Values
-	//vector<pair<int,int> > a;
-
-	//for ( i = 0; i < n; i++ ) {
-		//cin >> k;
-		//a.push_back (make_pair (k,i)); // k = value, i = original index
-	//}
-
-	//sort( a.begin(), a.end() );
-
-	//for (i = 0 ; i < n ; i++){
-		//cout << a[i].first << " " << a[i].second << "\n";
-	//}
+	// IDEA (nao implemento pq nao consigo)
+	// (1) Percorrer a array com os custos dos aeroportos
+	// (2) Ordenar a array original [200,100,400,300]
+	// (3) Obter os indices da array original mas ordenada ou seja 2,1,4,3
+	// Utilizar esses indices para aceder ao _first[c] na funcao em baixo sendo q
+	// os c's sao os que acabamos de calcular
+	// podemos implementar um algoritmo ordenacao (nlogn) e assim ficamos com
+	// tempo n + nlogn pq no algoritmo de prim temos um for (n)
 
 }
 
 /***************************** Prim's Algorithm *********************************/
 void Graph::min_span_tree() {
+
+	// Sort the costs indexes
+	// sort_airports_cost(); and replace c's with the indexes of the 
 
 	// Goes through all Cities
 	for (int c = 1; c <= _nr_cities; c++ ) {
