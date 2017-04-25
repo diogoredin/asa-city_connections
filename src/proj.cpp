@@ -73,6 +73,9 @@ class Graph {
 		size_t size()      const { return _cities.size() - 1; }
 		Status status()    const { return _status; }
 
+		int cost_airport(Vertex city) { return _airport_cost[city]; }
+		int cost_road(Edge road)      { return _road_cost[road]; }
+
 		/* Class functional methods */
 		// TODO
 
