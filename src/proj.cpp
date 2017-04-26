@@ -75,6 +75,8 @@ class Graph {
 Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
+	_final_airports = 0;
+	_final_roads = 0;
 	_cities = vector< list<Vertex> >(num_vertices + 1);
 	_airport_costs = vector<int>(num_vertices + 1);
 
@@ -90,12 +92,10 @@ void Graph::connect(size_t u, size_t v, int cost) {
 /* Examines Graph */
 ostream& operator<<(ostream& os, const Graph &graph) {
 	switch ( graph.status() ) {
-		case INSUFFICIENT:
-			return os << "Insuficiente";
-
 		default: {
-			os << graph.cost() << endl;
-			return os << graph.num_airports() << " " << graph.num_roads();
+			os << "Total Cost : " << graph.cost() << endl;
+			os << "Airports : " << graph.num_airports() << endl;
+			return os << "Roads: " << graph.num_roads();
 		}
 	}
 }
@@ -119,14 +119,16 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert Source City in the Priority Queue and Init its cost as 0 */
-    queue.push(new_vertex(0, source_city));
-	cost[source_city] = 0;
+    queue.push(new_vertex(1, source_city));
+	cost[source_city] = 1;
 
 	/* Go through all Cities */
 	while ( !queue.empty() ) {
 
-        int city_u = queue.top().second;
+        int city_u = queue.top().second; 
         queue.pop();
+
+		if ( city_u == 0 ) {
         visited[city_u] = true;
 
         /* Iterate over all adjacent Cities of U */
@@ -141,6 +143,8 @@ void Graph::min_span_tree() {
 			than current key of V */
             if ( visited[city_v] == false && cost[city_v] > city_cost ) {
 
+				_final_roads++;
+
                 /* Updating Cost of V */
                 cost[city_v] = city_cost;
                 queue.push(new_vertex(cost[city_v], city_v));
@@ -149,11 +153,13 @@ void Graph::min_span_tree() {
 			}
 
         }
+
+		}
     }
 
     /* Print MST */
     for (size_t i = 1; i <= result.size(); i++)
-        printf("%d / %zu\n", result[i], i);
+        printf("%d <-> %zu\n", result[i], i);
 
 }
 
