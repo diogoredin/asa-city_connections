@@ -45,7 +45,7 @@ Edge new_edge(int a, int b) {
 Edge new_edge(Vertex a, Vertex b) { return std::make_pair(a, b); }
 
 /* Global queue */
-std::priority_queue<Vertex, std::vector<Vertex>, std::greater<Vertex> > queue;
+std::priority_queue<Vertex> queue;
 #define enqueue(a) queue.push_back(a)
 #define dequeue()  queue.back(); queue.pop_back()
 #define is_empty() queue.empty()
@@ -83,7 +83,6 @@ class Graph {
 		/* Operator overrides */
 		int& operator[](Vertex city) { return _airport_cost[city]; }
 		int& operator[](Edge road)   { return _road_cost[road]; }
-		//friend bool operator<(Vertex a, Vertex b) { return cost_airport(a) > cost_airport(b); }
 		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
 
 		/* Magic methods */
@@ -116,19 +115,7 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 /****************************** Sort Algorithm ***********************************/
 void Graph::sort_airports_cost() {
 
-	/* Define our iterator */
-	std::map<Vertex, int>::iterator city;
 
-	/* Vector of results */
-	std::vector<Vertex> airports(size());
-
-	/* Sort airports by cost (greedy approach) */
-	int index = 0;
-    for ( city = _airport_cost.begin(); city != _airport_cost.end(); city++, index++ ) {
-		airports[index] = city->second;
-	}
-
-	std::sort( airports.begin(), airports.end() );
 
 }
 
