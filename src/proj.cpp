@@ -8,7 +8,6 @@
 #include <iostream>
 #include <algorithm>
 #include <list>
-#include <map>
 #include <queue>
 #include <vector>
 
@@ -34,30 +33,18 @@ enum Status {
 /******************** Data structures and their "methods" *********************/
 
 /* Vertex Structure */
-typedef size_t Vertex;
-Vertex new_vertex(int val) { return val; }
-#define next_vertex(a) a + 1
-
-/* Edge Structure */
-typedef pair<Vertex, Vertex> Edge;
-Edge new_edge(int a, int b) {
-	Vertex u = new_vertex(a), v = new_vertex(b);
-	return make_pair(u, v);
-}
-Edge new_edge(Vertex a, Vertex b) { return make_pair(a, b); }
+typedef pair< size_t, int > Vertex;
+Vertex new_vertex(int city, int cost) { return make_pair(city, cost); }
 
 /* Graph Structure */
 class Graph {
 	private:
 		Status _status;
 		int _total_cost;
-		int _possible_roads, _possible_airports;
 		int _final_roads, _final_airports;
 
 		vector< list<Vertex> > _cities;
-
-		map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
-		map<Edge, int>   _road_cost;    /* _road_cost[Edge]      = (int) cost */
+		vector<int> _airport_costs;
 
 	public:
 		Graph(int num_vertices);
@@ -70,15 +57,11 @@ class Graph {
 		size_t size()      const { return _cities.size() - 1; }
 		Status status()    const { return _status; }
 
-		int cost_airport(Vertex city) { return _airport_cost[city]; }
-		int cost_road(Edge road)      { return _road_cost[road]; }
-
 		/* Class functional methods */
-		// TODO
+		void connect(int u, int v, int cost);
 
 		/* Operator overrides */
-		int& operator[](Vertex city) { return _airport_cost[city]; }
-		int& operator[](Edge road)   { return _road_cost[road]; }
+		int& operator[](size_t city) { return _airport_costs[city]; }
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Magic methods */
@@ -94,6 +77,11 @@ Graph::Graph(int num_vertices) {
 
 }
 Graph::~Graph() { /* Nothing here */ }
+
+void Graph::connect(int u, int v, int cost) {
+	_cities[u].push_back(new_vertex(v, cost));
+    _cities[v].push_back(new_vertex(u, cost));
+}
 
 /* Examines Graph */
 ostream& operator<<(ostream& os, const Graph &graph) {
@@ -141,8 +129,7 @@ int main(void) {
 		int cost;
 		get_numbers(&a, &cost);
 
-		Vertex city = new_vertex(a);
-		g[city] = cost;
+		g[a] = cost;
 	}
 
 	/* Get number of possible roads */
@@ -154,8 +141,7 @@ int main(void) {
 		int cost;
 		get_numbers(&a, &b, &cost);
 
-		Edge road = new_edge(a, b);
-		g[road] = cost;
+		g.connect(a, b, cost);
 	}
 
 	// TODO: apply algorithms
