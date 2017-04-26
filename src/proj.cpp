@@ -76,6 +76,7 @@ Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
 	_cities = vector< list<Vertex> >(num_vertices + 1);
+	_airport_costs = vector<int>(num_vertices + 1);
 
 }
 Graph::~Graph() { /* Nothing here */ }
@@ -102,7 +103,7 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 void Graph::min_span_tree() {
 
     /* Build Priority Queue */
-    priority_queue< Vertex, vector <Vertex> , greater<Vertex> > queue;
+    priority_queue< Vertex, vector<Vertex>, greater<Vertex> > queue;
 
 	/* Start from som Random City (0) */
 	int source = 0;
@@ -133,7 +134,7 @@ void Graph::min_span_tree() {
 
 			/* Get Number of the City and Weight of the Current Ajacent */
             int city_v = i->first;
-            int city_cost = i->second;
+            int city_cost = _airport_costs[city_v];
  
             /*  If City V hasnt been visited and the weight of (u,v) is smaller 
 			than current key of V */
@@ -150,8 +151,8 @@ void Graph::min_span_tree() {
     }
 
     /* Print MST */
-    for (size_t i = 1; i < size(); ++i)
-        printf("%d - %zu\n", result[i], i);
+    for (size_t i = 1; i < result.size(); ++i)
+        printf("%d / %zu\n", result[i], i);
 
 }
 
