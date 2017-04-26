@@ -128,7 +128,7 @@ void Graph::min_span_tree() {
         int city_u = queue.top().second;
         queue.pop();
         visited[city_u] = true;
- 
+
         /* Iterate over all adjacent Cities of U */
 		list< Vertex >::iterator i;
         for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); ++i ) {
@@ -136,8 +136,8 @@ void Graph::min_span_tree() {
 			/* Get Number of the City and Weight of the Current Ajacent */
             int city_v = i->first;
             int city_cost = _airport_costs[city_v];
- 
-            /*  If City V hasnt been visited and the weight of (u,v) is smaller 
+
+            /*  If City V hasnt been visited and the weight of (u,v) is smaller
 			than current key of V */
             if ( visited[city_v] == false && cost[city_v] > city_cost ) {
 
@@ -154,6 +154,7 @@ void Graph::min_span_tree() {
     /* Print MST */
     for (size_t i = 1; i <= result.size(); i++)
         printf("%d / %zu\n", result[i], i);
+	}
 
 }
 
