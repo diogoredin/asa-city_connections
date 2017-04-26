@@ -37,7 +37,7 @@ enum Status {
 
 /* Vertex Structure */
 typedef pair< size_t, int > Vertex;
-Vertex new_vertex(int city, int cost) { return make_pair(city, cost); }
+Vertex new_vertex(int cost, int city) { return make_pair(cost, city); }
 
 /* Graph Structure */
 class Graph {
@@ -64,7 +64,7 @@ class Graph {
 		void connect(size_t u, size_t v, int cost);
 
 		/* Operator overrides */
-		int& operator[](size_t city) { return _airport_costs[city]; }
+		//int& operator[](size_t city) { return _airport_costs[city]; }
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Magic methods */
@@ -81,6 +81,7 @@ Graph::Graph(int num_vertices) {
 }
 Graph::~Graph() { /* Nothing here */ }
 
+/* Adds Vertex */
 void Graph::connect(size_t u, size_t v, int cost) {
 	_cities[u].push_back(new_vertex(v, cost));
     _cities[v].push_back(new_vertex(u, cost));
@@ -106,7 +107,7 @@ void Graph::min_span_tree() {
     priority_queue< Vertex, vector<Vertex>, greater<Vertex> > queue;
 
 	/* Start from som Random City (0) */
-	int source = 0;
+	int source_city = 0;
 
 	/* Store Costs */
 	vector<int> cost(size(), INF);
@@ -118,8 +119,8 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert Source City in the Priority Queue and Init its cost as 0 */
-    queue.push(make_pair(0, source));
-	cost[source] = 0;
+    queue.push(new_vertex(0, source_city));
+	cost[source_city] = 0;
 
 	/* Go through all Cities */
 	while ( !queue.empty() ) {
@@ -142,7 +143,7 @@ void Graph::min_span_tree() {
 
                 /* Updating Cost of V */
                 cost[city_v] = city_cost;
-                queue.push(make_pair(cost[city_v], city_v));
+                queue.push(new_vertex(cost[city_v], city_v));
                 result[city_v] = city_u;
 
 			}
@@ -151,7 +152,7 @@ void Graph::min_span_tree() {
     }
 
     /* Print MST */
-    for (size_t i = 1; i < result.size(); ++i)
+    for (size_t i = 1; i <= result.size(); i++)
         printf("%d / %zu\n", result[i], i);
 
 }
@@ -164,28 +165,26 @@ int main(void) {
 	get_numbers(&num_cities);
 	Graph g(num_cities);
 
-	/* Get number of possible Airports */
-	get_numbers(&num_airports);
-
 	/* Get Cost of each Airport (city, cost) */
+	get_numbers(&num_airports);
 	while ( num_airports-- > 0 ) {
-		int a;
+		int city;
 		int cost;
-		get_numbers(&a, &cost);
+		get_numbers(&city, &cost);
 
-		g[a] = cost;
+		/* Because Vertexes arent connected (will be connected later in the algorithm),
+		we add them to an imaginary city 0 which we can iterate */
+		g.connect(0, city, cost);
 	}
 
-	/* Get number of possible roads */
-	get_numbers(&num_roads);
-
 	/* Get Cost of each Road (city_a, city_b, cost) */
+	get_numbers(&num_roads);
 	while ( num_roads-- > 0 ) {
-		int a, b;
+		int city_a, city_b;
 		int cost;
-		get_numbers(&a, &b, &cost);
+		get_numbers(&city_a, &city_b, &cost);
 
-		g.connect(a, b, cost);
+		g.connect(city_a, city_b, cost);
 	}
 
 	// TODO: apply algorithms
