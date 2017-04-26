@@ -58,7 +58,7 @@ class Graph {
 		Status status()    const { return _status; }
 
 		/* Class functional methods */
-		void connect(int u, int v, int cost);
+		void connect(size_t u, size_t v, int cost);
 
 		/* Operator overrides */
 		int& operator[](size_t city) { return _airport_costs[city]; }
@@ -78,7 +78,7 @@ Graph::Graph(int num_vertices) {
 }
 Graph::~Graph() { /* Nothing here */ }
 
-void Graph::connect(int u, int v, int cost) {
+void Graph::connect(size_t u, size_t v, int cost) {
 	_cities[u].push_back(new_vertex(v, cost));
     _cities[v].push_back(new_vertex(u, cost));
 }
