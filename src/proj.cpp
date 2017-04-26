@@ -154,7 +154,6 @@ void Graph::min_span_tree() {
     /* Print MST */
     for (size_t i = 1; i <= result.size(); i++)
         printf("%d / %zu\n", result[i], i);
-	}
 
 }
 
