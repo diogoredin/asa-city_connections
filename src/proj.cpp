@@ -108,8 +108,8 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
-    queue.push(new_vertex(0, 1));
-	cost[0] = 0;
+    queue.push(new_vertex(1, 1));
+	cost[1] = 0;
 
 	/* */
 	while ( !queue.empty() ) {
