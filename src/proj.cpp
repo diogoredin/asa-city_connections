@@ -12,6 +12,8 @@
 #include <queue>
 #include <vector>
 
+using namespace std;
+
 /****************************** auxy functions *********************************/
 void get_numbers(int *a) {
 	scanf("%d", a);
@@ -37,18 +39,12 @@ Vertex new_vertex(int val) { return val; }
 #define next_vertex(a) a + 1
 
 /* Edge Structure */
-typedef std::pair<Vertex, Vertex> Edge;
+typedef pair<Vertex, Vertex> Edge;
 Edge new_edge(int a, int b) {
 	Vertex u = new_vertex(a), v = new_vertex(b);
-	return std::make_pair(u, v);
+	return make_pair(u, v);
 }
-Edge new_edge(Vertex a, Vertex b) { return std::make_pair(a, b); }
-
-/* Global queue */
-std::priority_queue<Vertex> queue;
-#define enqueue(a) queue.push_back(a)
-#define dequeue()  queue.back(); queue.pop_back()
-#define is_empty() queue.empty()
+Edge new_edge(Vertex a, Vertex b) { return make_pair(a, b); }
 
 /* Graph Structure */
 class Graph {
@@ -58,10 +54,10 @@ class Graph {
 		int _possible_roads, _possible_airports;
 		int _final_roads, _final_airports;
 
-		std::vector< std::list<Vertex> > _cities;
+		vector< list<Vertex> > _cities;
 
-		std::map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
-		std::map<Edge, int>   _road_cost;    /* _road_cost[Edge]      = (int) cost */
+		map<Vertex, int> _airport_cost; /* _airport_cost[Vertex] = (int) cost */
+		map<Edge, int>   _road_cost;    /* _road_cost[Edge]      = (int) cost */
 
 	public:
 		Graph(int num_vertices);
@@ -83,7 +79,7 @@ class Graph {
 		/* Operator overrides */
 		int& operator[](Vertex city) { return _airport_cost[city]; }
 		int& operator[](Edge road)   { return _road_cost[road]; }
-		friend std::ostream& operator<<(std::ostream& os, const Graph &graph);
+		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Magic methods */
 		void sort_airports_cost();
@@ -94,19 +90,19 @@ class Graph {
 Graph::Graph(int num_vertices) {
 
 	_status = INSUFFICIENT;
-	_cities = std::vector< std::list<Vertex> >(num_vertices + 1);
+	_cities = vector< list<Vertex> >(num_vertices + 1);
 
 }
 Graph::~Graph() { /* Nothing here */ }
 
 /* Examines Graph */
-std::ostream& operator<<(std::ostream& os, const Graph &graph) {
+ostream& operator<<(ostream& os, const Graph &graph) {
 	switch ( graph.status() ) {
 		case INSUFFICIENT:
 			return os << "Insuficiente";
 
 		default: {
-			os << graph.cost() << std::endl;
+			os << graph.cost() << endl;
 			return os << graph.num_airports() << " " << graph.num_roads();
 		}
 	}
@@ -115,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const Graph &graph) {
 /****************************** Sort Algorithm ***********************************/
 void Graph::sort_airports_cost() {
 
-
+	// TODO
 
 }
 
@@ -123,7 +119,7 @@ void Graph::sort_airports_cost() {
 void Graph::min_span_tree() {
 
     //for ( city = _cities.begin(); city != _cities.end(); _cities++ ) {
-		//std::cout << cost_airport(city->first) << std::endl;
+		//cout << cost_airport(city->first) << endl;
 	//}
 
 }
@@ -165,7 +161,7 @@ int main(void) {
 	// TODO: apply algorithms
 	g.sort_airports_cost();
 	g.min_span_tree();
-	std::cout << g << std::endl;
+	cout << g << endl;
 
 	return 0;
 }
