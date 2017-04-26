@@ -11,6 +11,9 @@
 #include <queue>
 #include <vector>
 
+#define INF 0x3f3f3f3f
+#define UDF -1
+
 using namespace std;
 
 /****************************** auxy functions *********************************/
@@ -65,7 +68,6 @@ class Graph {
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Magic methods */
-		void sort_airports_cost();
 		void min_span_tree();
 };
 
@@ -96,19 +98,60 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 	}
 }
 
-/****************************** Sort Algorithm ***********************************/
-void Graph::sort_airports_cost() {
-
-	// TODO
-
-}
-
 /***************************** Prim's Algorithm *********************************/
 void Graph::min_span_tree() {
 
-    //for ( city = _cities.begin(); city != _cities.end(); _cities++ ) {
-		//cout << cost_airport(city->first) << endl;
-	//}
+    /* Build Priority Queue */
+    priority_queue< Vertex, vector <Vertex> , greater<Vertex> > queue;
+
+	/* Start from som Random City (0) */
+	int source = 0;
+
+	/* Store Costs */
+	vector<int> cost(size(), INF);
+
+    /* Store MST */
+    vector<int> result(size(), UDF);
+
+    /* Keep track of cities visited */
+    vector<bool> visited(size(), false);
+
+	/* Insert Source City in the Priority Queue and Init its cost as 0 */
+    queue.push(make_pair(0, source));
+	cost[source] = 0;
+
+	/* Go through all Cities */
+	while ( !queue.empty() ) {
+
+        int city_u = queue.top().second;
+        queue.pop();
+        visited[city_u] = true;
+ 
+        /* Iterate over all adjacent Cities of U */
+		list< Vertex >::iterator i;
+        for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); ++i ) {
+
+			/* Get Number of the City and Weight of the Current Ajacent */
+            int city_v = i->first;
+            int city_cost = i->second;
+ 
+            /*  If City V hasnt been visited and the weight of (u,v) is smaller 
+			than current key of V */
+            if ( visited[city_v] == false && cost[city_v] > city_cost ) {
+
+                /* Updating Cost of V */
+                cost[city_v] = city_cost;
+                queue.push(make_pair(cost[city_v], city_v));
+                result[city_v] = city_u;
+
+			}
+
+        }
+    }
+
+    /* Print MST */
+    for (size_t i = 1; i < size(); ++i)
+        printf("%d - %zu\n", result[i], i);
 
 }
 
@@ -145,7 +188,6 @@ int main(void) {
 	}
 
 	// TODO: apply algorithms
-	g.sort_airports_cost();
 	g.min_span_tree();
 	cout << g << endl;
 
