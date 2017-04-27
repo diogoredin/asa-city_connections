@@ -88,6 +88,10 @@ void Graph::connect(size_t u, size_t v, int cost) {
 /* Examines Graph */
 ostream& operator<<(ostream& os, const Graph &graph) {
 	switch ( graph.status() ) {
+		/*
+		case INSUFFICIENT:
+			return os << "Insuficiente";
+		*/
 		default: {
 			os << "Total Cost : " << graph.cost() << endl;
 			os << "Airports : " << graph.num_airports() << endl;
@@ -104,7 +108,7 @@ void Graph::min_span_tree() {
 
 	/* Store Costs, Minimum Spanning Tree and Visited Cities */
 	vector<int> cost(size(), 1000);
-    vector<int> result(size() - 1, -1);
+    vector<int> result(size(), -1);
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
@@ -151,7 +155,7 @@ void Graph::min_span_tree() {
 
     /* Print Minimum Spanning Tree */
     for (size_t k = 1; k < result.size(); k++) {
-        printf("%d <-> %zu\n", result[k], k);
+        printf("%zu <-> %d\n", k, result[k]);
 	}
 
 }
