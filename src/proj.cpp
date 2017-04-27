@@ -124,7 +124,7 @@ void Graph::min_span_tree() {
 	while ( !queue.empty() ) {
 
 		/* Get current city from queue */
-        int city = queue.top().second;
+        Vertex city = queue.top().second;
 		visited[city] = true;
 		queue.pop();
 
@@ -132,7 +132,7 @@ void Graph::min_span_tree() {
 		list< Edge >::iterator i;
         for ( i = _roads[city].begin(); i != _roads[city].end(); i++ ) {
 
-            int adj_city = i->second;
+            Vertex adj_city = i->second;
             int adj_city_cost = i->first;
 
 			/*  Choose the next Best City - Valid if the cost is less than
