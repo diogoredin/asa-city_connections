@@ -133,39 +133,56 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 	}
 }
 
+/* Generates a Minimum Spanning Tree */
 void Graph::min_span_tree() {
-	for (Vertex city = 1; city < _num_vertices; city++) {
+
+	for ( Vertex city = 1; city < _num_vertices; city++ ) {
 		make_set(city);
 	}
 
-	while (_roads.size() > 1 || _airports.size() > 1) {
+	int cities = _num_vertices;
+	while ( cities-- > 0 ) {
 
-		int cost_road = !_roads.empty() ? _roads.top().first : 0;
-		int cost_airport = !_airports.empty() ? _airports.top().first : 0;
+		int cost_road = !_roads.empty() ? _roads.top().first : 1000;
+		int cost_airport = !_airports.empty() ? _airports.top().first : 1000;
+		int city_a, city_b, city;
 
-		if ( cost_road >= cost_airport ) {
+		if ( cost_road < cost_airport || cost_road == cost_airport ) {
 
-			Vertex city_a = _roads.top().second.first;
-			Vertex city_b = _roads.top().second.second;
+			city_a = _roads.top().second.first;
+			city_b = _roads.top().second.second;
+
 			Vertex set_a = find_set(city_a);
 			Vertex set_b = find_set(city_b);
 
-			if (set_a != set_b) {
+			if ( set_a != set_b ) {
 				_final_roads++;
+				_total_cost += cost_road;
+
 				merge_set(set_a, set_b);
-				_total_cost += _roads.top().first;
 			}
 
 			_roads.pop();
+		}
 
-		} else {
+		else if ( cost_airport < cost_road ) {
+
+			city = _roads.top().second.second;
 
 			_final_airports++;
-			_total_cost += _airports.top().first;
+			_total_cost += cost_airport;
+
 			_airports.pop();
 
 		}
+
 	}
+
+	/* Define Graph Status */
+	if ( _final_airports + _final_roads != (int) _num_vertices-1 ) {
+		//_status = INSUFFICIENT;
+	}
+
 }
 
 /***************************** MAIN function **********************************/
