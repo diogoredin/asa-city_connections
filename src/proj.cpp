@@ -139,11 +139,11 @@ void Graph::min_span_tree() {
 	}
 
 	while (_roads.size() > 1 || _airports.size() > 1) {
-		
+
 		int cost_road = !_roads.empty() ? _roads.top().first : 0;
 		int cost_airport = !_airports.empty() ? _airports.top().first : 0;
 
-		if ( cost_road == cost_airport ) {
+		if ( cost_road == cost_airport || cost_road > cost_airport ) {
 
 			Vertex city_a = _roads.top().second.first;
 			Vertex city_b = _roads.top().second.second;
