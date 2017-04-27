@@ -32,9 +32,9 @@ enum Status {
 
 /******************** Data structures and their "methods" *********************/
 
-/* Vertex Structure */
-typedef pair< size_t, int > Vertex;
-Vertex new_vertex(int cost, int city) { return make_pair(cost, city); }
+/* Edge Structure */
+typedef pair< size_t, int > Edge;
+Edge new_edge(int cost, int city) { return make_pair(cost, city); }
 
 /* Graph Structure */
 class Graph {
@@ -43,7 +43,7 @@ class Graph {
 		int _total_cost;
 		int _final_roads, _final_airports;
 
-		vector< list<Vertex> > _cities;
+		vector< list<Edge> > _roads;
 
 	public:
 		Graph(int num_vertices);
@@ -53,7 +53,7 @@ class Graph {
 		int cost()         const { return _total_cost; }
 		int num_roads()    const { return _final_roads; }
 		int num_airports() const { return _final_airports; }
-		size_t size()      const { return _cities.size(); }
+		size_t size()      const { return _roads.size(); }
 		Status status()    const { return _status; }
 
 		/* Class functional methods */
@@ -69,7 +69,7 @@ class Graph {
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
 
-	_cities = vector< list<Vertex> >(num_vertices + 1);
+	_roads = vector< list<Edge> >(num_vertices + 1);
 
 	_status = INSUFFICIENT;
 	_total_cost = 0;
@@ -79,10 +79,10 @@ Graph::Graph(int num_vertices) {
 }
 Graph::~Graph() { /* Nothing here */ }
 
-/* Adds Vertex */
+/* Adds Edge */
 void Graph::connect(size_t u, size_t v, int cost) {
-	_cities[u].push_back(new_vertex(cost, v));
-    _cities[v].push_back(new_vertex(cost, u));
+	_roads[u].push_back(new_edge(cost, v));
+    _roads[v].push_back(new_edge(cost, u));
 }
 
 /* Examines Graph */
@@ -104,7 +104,7 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 void Graph::min_span_tree() {
 
     /* Build a Priority Queue */
-    priority_queue< Vertex, vector<Vertex>, greater<Vertex> > queue;
+    priority_queue< Edge, vector<Edge>, greater<Edge> > queue;
 
 	/* Store Costs, Minimum Spanning Tree and Visited Cities */
 	vector<int> cost(size(), 1000);
@@ -112,7 +112,7 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
-	queue.push(new_vertex(0, 1));
+	queue.push(new_edge(0, 1));
 	cost[1] = 0;
 
 	/* Run through the graph always choosing the
@@ -125,8 +125,8 @@ void Graph::min_span_tree() {
 		queue.pop();
 
         /* Determine the next city with the minimum cost */
-		list< Vertex >::iterator i;
-        for ( i = _cities[city].begin(); i != _cities[city].end(); i++ ) {
+		list< Edge >::iterator i;
+        for ( i = _roads[city].begin(); i != _roads[city].end(); i++ ) {
 
             int adj_city = i->second;
             int adj_city_cost = i->first;
@@ -146,7 +146,7 @@ void Graph::min_span_tree() {
 				}
 
 				_total_cost += cost[adj_city];
-				queue.push(new_vertex(cost[adj_city], adj_city));
+				queue.push(new_edge(cost[adj_city], adj_city));
 			}
 
 		}
