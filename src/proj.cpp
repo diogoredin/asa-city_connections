@@ -104,7 +104,7 @@ void Graph::min_span_tree() {
 
 	/* Store Costs, Minimum Spanning Tree and Visited Cities */
 	vector<int> cost(size(), 1000);
-    vector<int> result(size(), -1);
+    vector<int> result(size() - 1, -1);
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
