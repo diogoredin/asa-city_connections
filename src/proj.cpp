@@ -73,7 +73,7 @@ class Graph {
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
 
-	_status = INSUFFICIENT;
+	_status = CORRECT;
 	_num_vertices = num_vertices;
 	_total_cost = 0;
 	_final_airports = 0;
@@ -90,10 +90,9 @@ void Graph::connect(Vertex u, Vertex v, int cost) {
 /* Examines Graph */
 ostream& operator<<(ostream& os, const Graph &graph) {
 	switch ( graph.status() ) {
-		/*
 		case INSUFFICIENT:
 			return os << "Insuficiente";
-		*/
+
 		default: {
 			os << "Total Cost : " << graph.cost() << endl;
 			os << "Airports : " << graph.num_airports() << endl;
