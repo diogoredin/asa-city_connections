@@ -51,6 +51,7 @@ class Graph {
 		priority_queue< Edge, vector<Edge>, greater<Edge> > _airports;
 		vector<int> _rank;
 		vector<Vertex> _parent;
+		vector<bool> _visited;
 
 	public:
 		Graph(int num_vertices);
@@ -98,6 +99,7 @@ Graph::Graph(int num_vertices) {
 
 	_rank.resize(num_vertices + 1);
 	_parent.resize(num_vertices + 1);
+	_visited.resize(num_vertices + 1);
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
@@ -157,11 +159,15 @@ void Graph::min_span_tree() {
 			}
 
 			_roads.pop();
+			_visited[city_a] = true;
+			_visited[city_b] = true;
 
 		} else {
 
-			_final_airports++;
-			_total_cost += _airports.top().first;
+			if ( _visited[_airports.top().second.second] == false ) {
+				_final_airports++;
+				_total_cost += _airports.top().first;
+			}
 
 			_airports.pop();
 
