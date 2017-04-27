@@ -111,7 +111,7 @@ void Graph::min_span_tree() {
 	queue.push(new_vertex(0, 1));
 	cost[1] = 0;
 
-	/* Run through the graph always choosing the 
+	/* Run through the graph always choosing the
 	edge with the minimum cost (Greedy Approach) */
 	while ( !queue.empty() ) {
 
@@ -127,8 +127,8 @@ void Graph::min_span_tree() {
             int adj_city = i->second;
             int adj_city_cost = i->first;
 
-			/*  Choose the next Best City - Valid if the cost is less than 
-				the one registered and the new alternative is a road; or the 
+			/*  Choose the next Best City - Valid if the cost is less than
+				the one registered and the new alternative is a road; or the
 				cost is the same but the new alternative is a road.
 			*/
 			if ( visited[adj_city] == false && adj_city_cost < cost[adj_city] ) {
@@ -144,14 +144,15 @@ void Graph::min_span_tree() {
 				_total_cost += cost[adj_city];
 				queue.push(new_vertex(cost[adj_city], adj_city));
 			}
-		
+
 		}
 
     }
 
     /* Print Minimum Spanning Tree */
-    for (size_t k = 1; k < result.size(); k++)
+    for (size_t k = 1; k < result.size(); k++) {
         printf("%d <-> %zu\n", result[k], k);
+	}
 
 }
 
