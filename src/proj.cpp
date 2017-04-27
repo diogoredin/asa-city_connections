@@ -108,7 +108,7 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
-    queue.push(new_vertex(1, 1));
+    queue.push(new_vertex(0, 1));
 	cost[1] = 0;
 
 	/* Run through the graph always choosing the 
@@ -119,39 +119,45 @@ void Graph::min_span_tree() {
         int city_u = queue.top().second;
 		visited[city_u] = true;
 
-        /* Determine the next city with the minimum cost */
+        /* Determine the next city with the minimum cost (and implicitly the means) */
 		list< Vertex >::iterator i;
         for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); i++ ) {
 
             int city_v = i->second;
             int city_v_cost = i->first;
 
-			/* Prefer an Airport */
-			if ( visited[city_v] == false && city_v_cost < cost[city_v] ) {
+			/* Choose the next best city (and implicitly the means) */
+			if ( visited[city_v] == false && 
+				 city_v_cost < cost[city_v] ) {
 
  				cost[city_v] = city_v_cost;
 				result[city_v] = city_u;
+
+				/* Check how we will get there */
+				if ( city_v == 0 ) {
+					_final_airports++;
+				} else if ( city_v > 0 ) {
+					_final_roads++;
+				}
 
                 queue.push(new_vertex(city_v_cost, city_v));
 			}
 
 			/* Prefer a Road */
-			if ( visited[city_v] == false && city_v_cost < cost[city_v] ) {
+			else if ( visited[city_v] == false &&
+					  _cities[city_u].end() == i &&
+					  city_v_cost == cost[city_v] ) {
 
- 				cost[city_v] = city_v_cost;
-				result[city_v] = city_u;
+				if ( city_v > 0 ) {
+					cost[city_v] = city_v_cost;
+					result[city_v] = city_u;
+					_final_roads++;
+				}
 
                 queue.push(new_vertex(city_v_cost, city_v));
 			}
 
         }
-
-		/* Update data */
-		if ( city_u == 0 ) {
-			_final_airports++;
-		} else {
-			_final_roads++;
-		}
 
 		/* Update total and remove from queue */
 		_total_cost += cost[city_u];
