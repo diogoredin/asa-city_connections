@@ -108,7 +108,7 @@ void Graph::min_span_tree() {
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
-    queue.push(new_vertex(0, 1));
+	queue.push(new_vertex(0, 1));
 	cost[1] = 0;
 
 	/* Run through the graph always choosing the 
@@ -116,58 +116,42 @@ void Graph::min_span_tree() {
 	while ( !queue.empty() ) {
 
 		/* Get current city from queue */
-        int city_u = queue.top().second;
-		visited[city_u] = true;
-
-        /* Determine the next city with the minimum cost (and implicitly the means) */
-		list< Vertex >::iterator i;
-        for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); i++ ) {
-
-            int city_v = i->second;
-            int city_v_cost = i->first;
-
-			/* Choose the next best city (and implicitly the means) */
-			if ( visited[city_v] == false && 
-				 city_v_cost < cost[city_v] ) {
-
- 				cost[city_v] = city_v_cost;
-				result[city_v] = city_u;
-
-				/* Check how we will get there */
-				if ( city_v == 0 ) {
-					_final_airports++;
-				} else if ( city_v > 0 ) {
-					_final_roads++;
-				}
-
-                queue.push(new_vertex(city_v_cost, city_v));
-			}
-
-			/* Prefer a Road */
-			else if ( visited[city_v] == false &&
-					  _cities[city_u].end() == i &&
-					  city_v_cost == cost[city_v] ) {
-
-				if ( city_v > 0 ) {
-					cost[city_v] = city_v_cost;
-					result[city_v] = city_u;
-					_final_roads++;
-				}
-
-                queue.push(new_vertex(city_v_cost, city_v));
-			}
-
-        }
-
-		/* Update total and remove from queue */
-		_total_cost += cost[city_u];
+        int city = queue.top().second;
+		visited[city] = true;
 		queue.pop();
+
+        /* Determine the next city with the minimum cost */
+		list< Vertex >::iterator i;
+        for ( i = _cities[city].begin(); i != _cities[city].end(); i++ ) {
+
+            int adj_city = i->second;
+            int adj_city_cost = i->first;
+
+			/*  Choose the next Best City - Valid if the cost is less than 
+				the one registered and the new alternative is a road; or the 
+				cost is the same but the new alternative is a road.
+			*/
+			if ( visited[adj_city] == false && adj_city_cost < cost[adj_city] ) {
+				cost[adj_city] = adj_city_cost;
+				result[adj_city] = city;
+
+				if ( adj_city == 0 ) {
+					_final_airports++;
+				} else if ( adj_city > 0 ) {
+					_final_roads++;
+				}
+
+				_total_cost += cost[adj_city];
+				queue.push(new_vertex(cost[adj_city], adj_city));
+			}
+		
+		}
 
     }
 
     /* Print Minimum Spanning Tree */
-    for (size_t i = 1; i < result.size(); i++)
-        printf("%d <-> %zu\n", result[i], i);
+    for (size_t k = 1; k < result.size(); k++)
+        printf("%d <-> %zu\n", result[k], k);
 
 }
 
