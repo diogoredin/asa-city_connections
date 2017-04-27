@@ -109,16 +109,17 @@ void Graph::min_span_tree() {
 
 	/* Insert random City into the Priority Queue */
     queue.push(new_vertex(1, 1));
-	cost[1] = 0;
+	cost[1] = 1000;
 
-	/* */
+	/* Run through the graph always choosing the 
+	edge with the minimum cost (Greedy Approach) */
 	while ( !queue.empty() ) {
 
         int city_u = queue.top().second;
 		visited[city_u] = true;
 		queue.pop();
 
-        /* */
+        /* Get the next city with the minimum cost */
 		list< Vertex >::iterator i;
         for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); i++ ) {
 
