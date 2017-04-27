@@ -48,6 +48,8 @@ class Graph {
 		int _final_roads, _final_airports;
 
 		priority_queue< Edge, vector<Edge>, greater<Edge> > _roads;
+		vector<int> _rank;
+		vector<Vertex> _parent;
 
 	public:
 		Graph(int num_vertices);
@@ -62,6 +64,26 @@ class Graph {
 
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int cost);
+		void make_set(Vertex u) {
+			_rank[u] = 0;
+			_parent[u] = u;
+		}
+
+		Vertex find_set(Vertex u) {
+			if (u != _parent[u]) { _parent[u] = find_set(_parent[u]); }
+			return _parent[u];
+		}
+
+		void merge_set(Vertex u, Vertex v) {
+			if (u == v) { return; }
+
+			if (_rank[u] < _rank[v]) { _parent[u] = v; }
+			else if (_rank[u] > _rank[v]) { _parent[v] = u; }
+			else {
+				_parent[v] = u;
+	         	_rank[u]++;
+			}
+		}
 
 		/* Operator overrides */
 		friend ostream& operator<<(ostream& os, const Graph &graph);
@@ -72,6 +94,9 @@ class Graph {
 
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
+
+	_rank.resize(num_vertices + 1);
+	_parent.resize(num_vertices + 1);
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
@@ -101,18 +126,29 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 	}
 }
 
-/***************************** Prim's Algorithm *********************************/
 void Graph::min_span_tree() {
-
-	/* XXX: Reading queue */
-	while (!_roads.empty()) {
-		Vertex city_a = _roads.top().second.first;
-		Vertex city_b = _roads.top().second.second;
-		int cost = _roads.top().first;
-		cout << city_a << "-- " << cost << " --" << city_b << '\n';
-		_roads.pop();
+	for (Vertex city = 1; city < _num_vertices; city++) {
+		make_set(city);
 	}
 
+	while (_roads.size() > 1) {
+		Vertex city_a = _roads.top().second.first;
+		Vertex city_b = _roads.top().second.second;
+		Vertex set_a = find_set(city_a);
+		Vertex set_b = find_set(city_b);
+
+		if (set_a != set_b) {
+			if (city_a != 0) { // Only merge the two sets if it's a city
+				_final_roads++;
+				merge_set(set_a, set_b);
+			} else {
+				_final_airports++;
+			}
+			_total_cost += _roads.top().first;
+		}
+
+		_roads.pop();
+	}
 }
 
 /***************************** MAIN function **********************************/
