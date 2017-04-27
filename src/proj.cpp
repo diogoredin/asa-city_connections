@@ -29,6 +29,7 @@ enum Status {
 	CORRECT = 0,
 	INSUFFICIENT
 };
+#define INFINITY 0xFFFFFF
 
 /******************** Data structures and their "methods" *********************/
 
@@ -111,8 +112,8 @@ void Graph::min_span_tree() {
     priority_queue< Edge, vector<Edge>, greater<Edge> > queue;
 
 	/* Store Costs, Minimum Spanning Tree and Visited Cities */
-	vector<int> cost(size(), 1000);
-    vector<int> result(size(), -1);
+	vector<int> cost(size(), INFINITY);
+    vector<Vertex> result(size(), -1);
     vector<bool> visited(size(), false);
 
 	/* Insert random City into the Priority Queue */
@@ -159,7 +160,7 @@ void Graph::min_span_tree() {
 
     /* Print Minimum Spanning Tree */
     for (Vertex k = 1; k < result.size(); k++) {
-        printf("%zu <-> %d\n", k, result[k]);
+        printf("%zu <-> %zu\n", k, result[k]);
 	}
 
 }
