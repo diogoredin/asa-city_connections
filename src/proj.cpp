@@ -48,6 +48,7 @@ class Graph {
 		int _final_roads, _final_airports;
 
 		priority_queue< Edge, vector<Edge>, greater<Edge> > _roads;
+		priority_queue< Edge, vector<Edge>, greater<Edge> > _airports;
 		vector<int> _rank;
 		vector<Vertex> _parent;
 
@@ -109,7 +110,13 @@ Graph::~Graph() { /* Nothing here */ }
 
 /* Adds Edge */
 void Graph::connect(Vertex u, Vertex v, int cost) {
-	_roads.push(new_edge(u, v, cost));
+
+	if ( u != 0 ) {
+		_roads.push(new_edge(u, v, cost));
+	} else {
+		_airports.push(new_edge(u, v, cost));
+	}
+
 }
 
 /* Examines Graph */
@@ -131,23 +138,34 @@ void Graph::min_span_tree() {
 		make_set(city);
 	}
 
-	while (_roads.size() > 1) {
-		Vertex city_a = _roads.top().second.first;
-		Vertex city_b = _roads.top().second.second;
-		Vertex set_a = find_set(city_a);
-		Vertex set_b = find_set(city_b);
+	while (_roads.size() > 1 || _airports.size() > 1) {
+		
+		int cost_road = !_roads.empty() ? _roads.top().first : 0;
+		int cost_airport = !_airports.empty() ? _airports.top().first : 0;
 
-		if (set_a != set_b) {
-			if (city_a != 0) { // Only merge the two sets if it's a city
+		if ( cost_road == cost_airport ) {
+
+			Vertex city_a = _roads.top().second.first;
+			Vertex city_b = _roads.top().second.second;
+			Vertex set_a = find_set(city_a);
+			Vertex set_b = find_set(city_b);
+
+			if (set_a != set_b) {
 				_final_roads++;
 				merge_set(set_a, set_b);
-			} else {
-				_final_airports++;
+				_total_cost += _roads.top().first;
 			}
-			_total_cost += _roads.top().first;
-		}
 
-		_roads.pop();
+			_roads.pop();
+
+		} else {
+
+			_final_airports++;
+			_total_cost += _airports.top().first;
+
+			_airports.pop();
+
+		}
 	}
 }
 
