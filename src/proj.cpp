@@ -6,10 +6,7 @@
 /* Libraries. Only the bare minimum, no need for clutter */
 #include <stdio.h>
 #include <iostream>
-#include <algorithm>
-#include <list>
 #include <queue>
-#include <vector>
 
 using namespace std;
 
@@ -29,7 +26,6 @@ enum Status {
 	CORRECT = 0,
 	INSUFFICIENT
 };
-#define INFINITY 0xFFFFFF
 
 /******************** Data structures and their "methods" *********************/
 
@@ -38,17 +34,20 @@ typedef size_t Vertex;
 Vertex new_vertex(int val) { return val; }
 
 /* Edge Structure */
-typedef pair< Vertex, int > Edge;
-Edge new_edge(int cost, int city) { return make_pair(cost, city); }
+typedef pair< int, pair<Vertex, Vertex> > Edge;
+Edge new_edge(Vertex city_a, Vertex city_b, int cost) {
+	return make_pair(cost, make_pair(city_a, city_b));
+}
 
 /* Graph Structure */
 class Graph {
 	private:
 		Status _status;
+		size_t _num_vertices;
 		int _total_cost;
 		int _final_roads, _final_airports;
 
-		vector< list<Edge> > _roads;
+		priority_queue< Edge, vector<Edge>, greater<Edge> > _roads;
 
 	public:
 		Graph(int num_vertices);
@@ -74,9 +73,8 @@ class Graph {
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
 
-	_roads = vector< list<Edge> >(num_vertices + 1);
-
 	_status = INSUFFICIENT;
+	_num_vertices = num_vertices;
 	_total_cost = 0;
 	_final_airports = 0;
 	_final_roads = 0;
@@ -86,8 +84,7 @@ Graph::~Graph() { /* Nothing here */ }
 
 /* Adds Edge */
 void Graph::connect(Vertex u, Vertex v, int cost) {
-	_roads[u].push_back(new_edge(cost, v));
-    _roads[v].push_back(new_edge(cost, u));
+	_roads.push(new_edge(u, v, cost));
 }
 
 /* Examines Graph */
@@ -108,59 +105,13 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 /***************************** Prim's Algorithm *********************************/
 void Graph::min_span_tree() {
 
-    /* Build a Priority Queue */
-    priority_queue< Edge, vector<Edge>, greater<Edge> > queue;
-
-	/* Store Costs, Minimum Spanning Tree and Visited Cities */
-	vector<int> cost(size(), INFINITY);
-    vector<Vertex> result(size());
-    vector<bool> visited(size(), false);
-
-	/* Insert random City into the Priority Queue */
-	queue.push(new_edge(0, 1));
-	cost[1] = 0;
-
-	/* Run through the graph always choosing the
-	edge with the minimum cost (Greedy Approach) */
-	while ( !queue.empty() ) {
-
-		/* Get current city from queue */
-        Vertex city = queue.top().second;
-		visited[city] = true;
-		queue.pop();
-
-        /* Determine the next city with the minimum cost */
-		list< Edge >::iterator i;
-        for ( i = _roads[city].begin(); i != _roads[city].end(); i++ ) {
-
-            Vertex adj_city = i->second;
-            int adj_city_cost = i->first;
-
-			/*  Choose the next Best City - Valid if the cost is less than
-				the one registered and the new alternative is a road; or the
-				cost is the same but the new alternative is a road.
-			*/
-			if ( visited[adj_city] == false && adj_city_cost < cost[adj_city] ) {
-				cost[adj_city] = adj_city_cost;
-				result[adj_city] = city;
-
-				if ( adj_city == 0 ) {
-					_final_airports++;
-				} else if ( adj_city > 0 ) {
-					_final_roads++;
-				}
-
-				_total_cost += cost[adj_city];
-				queue.push(new_edge(cost[adj_city], adj_city));
-			}
-
-		}
-
-    }
-
-    /* Print Minimum Spanning Tree */
-    for (Vertex k = 1; k < result.size(); k++) {
-        printf("%zu <-> %zu\n", k, result[k]);
+	/* XXX: Reading queue */
+	while (!_roads.empty()) {
+		Vertex city_a = _roads.top().second.first;
+		Vertex city_b = _roads.top().second.second;
+		int cost = _roads.top().first;
+		cout << city_a << "-- " << cost << " --" << city_b << '\n';
+		_roads.pop();
 	}
 
 }
