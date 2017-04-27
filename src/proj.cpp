@@ -109,32 +109,53 @@ void Graph::min_span_tree() {
 
 	/* Insert random City into the Priority Queue */
     queue.push(new_vertex(1, 1));
-	cost[1] = 1000;
+	cost[1] = 0;
 
 	/* Run through the graph always choosing the 
 	edge with the minimum cost (Greedy Approach) */
 	while ( !queue.empty() ) {
 
+		/* Get current city from queue */
         int city_u = queue.top().second;
 		visited[city_u] = true;
-		queue.pop();
 
-        /* Get the next city with the minimum cost */
+        /* Determine the next city with the minimum cost */
 		list< Vertex >::iterator i;
         for ( i = _cities[city_u].begin(); i != _cities[city_u].end(); i++ ) {
 
             int city_v = i->second;
             int city_v_cost = i->first;
 
+			/* Prefer an Airport */
 			if ( visited[city_v] == false && city_v_cost < cost[city_v] ) {
 
-				cost[city_v] = city_v_cost;
+ 				cost[city_v] = city_v_cost;
+				result[city_v] = city_u;
+
+                queue.push(new_vertex(city_v_cost, city_v));
+			}
+
+			/* Prefer a Road */
+			if ( visited[city_v] == false && city_v_cost < cost[city_v] ) {
+
+ 				cost[city_v] = city_v_cost;
 				result[city_v] = city_u;
 
                 queue.push(new_vertex(city_v_cost, city_v));
 			}
 
         }
+
+		/* Update data */
+		if ( city_u == 0 ) {
+			_final_airports++;
+		} else {
+			_final_roads++;
+		}
+
+		/* Update total and remove from queue */
+		_total_cost += cost[city_u];
+		queue.pop();
 
     }
 
