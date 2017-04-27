@@ -32,8 +32,12 @@ enum Status {
 
 /******************** Data structures and their "methods" *********************/
 
+/* Vertex structure */
+typedef size_t Vertex;
+Vertex new_vertex(int val) { return val; }
+
 /* Edge Structure */
-typedef pair< size_t, int > Edge;
+typedef pair< Vertex, int > Edge;
 Edge new_edge(int cost, int city) { return make_pair(cost, city); }
 
 /* Graph Structure */
@@ -57,7 +61,7 @@ class Graph {
 		Status status()    const { return _status; }
 
 		/* Class functional methods */
-		void connect(size_t u, size_t v, int cost);
+		void connect(Vertex u, Vertex v, int cost);
 
 		/* Operator overrides */
 		friend ostream& operator<<(ostream& os, const Graph &graph);
@@ -80,7 +84,7 @@ Graph::Graph(int num_vertices) {
 Graph::~Graph() { /* Nothing here */ }
 
 /* Adds Edge */
-void Graph::connect(size_t u, size_t v, int cost) {
+void Graph::connect(Vertex u, Vertex v, int cost) {
 	_roads[u].push_back(new_edge(cost, v));
     _roads[v].push_back(new_edge(cost, u));
 }
@@ -154,7 +158,7 @@ void Graph::min_span_tree() {
     }
 
     /* Print Minimum Spanning Tree */
-    for (size_t k = 1; k < result.size(); k++) {
+    for (Vertex k = 1; k < result.size(); k++) {
         printf("%zu <-> %d\n", k, result[k]);
 	}
 
