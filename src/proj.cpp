@@ -107,7 +107,12 @@ class Graph {
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Algorithmic methods */
-		void min_span_tree();
+		void min_span_tree(
+			priority_queue< Edge, vector<Edge>, GreaterEdge > edges,
+			Budget &roads,
+			bool *visited
+		);
+		void solve();
 };
 
 /* Builds Graph */
@@ -139,76 +144,62 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 }
 
 /* Generates a Minimum Spanning Tree */
-void Graph::min_span_tree(void) {
+void Graph::min_span_tree(
+	priority_queue< Edge, vector<Edge>, GreaterEdge > edges,
+	Budget &roads,
+	bool *visited = NULL
+) {
+	re_set(); /* Resetting Graph's ranks and parents */
 
-	priority_queue< Edge, vector<Edge>, GreaterEdge > edges2;
+	for ( ; !edges.empty(); edges.pop() ) {
+		int cost = edges.top().first;
+		Vertex city_a = edges.top().second.first;
+		Vertex city_b = edges.top().second.second;
+
+		if (visited == NULL && city_a == AIRPORT) { continue; }
+
+		Vertex set_a = find_set(city_a);
+		Vertex set_b = find_set(city_b);
+
+		if ( set_a != set_b ) {
+
+			merge_set(set_a, set_b);
+
+			roads.cost += cost;
+
+			if (visited != NULL) {
+				visited[city_b] = true;
+				if (city_a != AIRPORT) {
+					roads.num_roads++;
+				} else {
+					roads.num_airports++;
+				}
+			} else {
+				roads.num_roads++;
+			}
+
+		}
+	}
+}
+
+void Graph::solve(void) {
 
 	/* Shared variables */
-	int cost;
-	Vertex city_a, city_b;
 	Budget roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
 
 	/* MST has no airports */
-	re_set();
-
-	for ( ; !_edges.empty(); _edges.pop() ) {
-		edges2.push(_edges.top());
-
-		cost = _edges.top().first;
-		city_a = _edges.top().second.first;
-		city_b = _edges.top().second.second;
-
-		if (city_a == AIRPORT) { continue; }
-
-		Vertex set_a = find_set(city_a);
-		Vertex set_b = find_set(city_b);
-
-		if ( set_a != set_b ) {
-
-			merge_set(set_a, set_b);
-
-			roads.num_roads++;
-			roads.cost += cost;
-
-		}
-	}
+	min_span_tree(_edges, roads);
 
 	/* MST has airports */
 	bool *visited = new bool[_num_vertices + 1];
-	re_set();
-
-	for ( ; !edges2.empty(); edges2.pop() ) {
-		cost = edges2.top().first;
-		city_a = edges2.top().second.first;
-		city_b = edges2.top().second.second;
-
-		Vertex set_a = find_set(city_a);
-		Vertex set_b = find_set(city_b);
-
-		if ( set_a != set_b ) {
-
-			merge_set(set_a, set_b);
-
-			if (city_a == AIRPORT) {
-				roads_airports.num_airports++;
-			} else {
-				roads_airports.num_roads++;
-			}
-			roads_airports.cost += cost;
-			visited[city_b] = true;
-
-		}
-	}
+	min_span_tree(_edges, roads_airports, visited);
 
 	/* Taking road costs */
 	if (roads.num_roads == (int) _num_vertices-1) {
-		if (roads.cost <= roads_airports.cost) {
-			_budget = roads;
-		} else {
-			_budget = roads_airports;
-		}
+		_budget = (roads.cost <= roads_airports.cost) ? roads : roads_airports;
 	} else {
 		_budget = roads_airports;
+
 		for (Vertex city = 1; city <= _num_vertices; city++) {
 			if (!visited[city]) {
 				_status = INSUFFICIENT;
@@ -245,8 +236,8 @@ int main(void) {
 		g.connect(city_a, city_b, cost);
 	}
 
-	/* Generate a Minimum Spanning Tree */
-	g.min_span_tree();
+	/* Solve the graph */
+	g.solve();
 
 	cout << g << endl;
 
