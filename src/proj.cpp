@@ -77,7 +77,7 @@ class Graph {
 		int num_roads()    const { return _final_roads; }
 		int num_airports() const { return _final_airports; }
 		Status status()    const { return _status; }
-		size_t size()      const { return _num_vertices-1; }
+		size_t size()      const { return _num_vertices; }
 
 		/* Class functional methods */
 		void print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue);
