@@ -203,7 +203,7 @@ void Graph::solve(void) {
 	} else {
 		_budget = roads_airports;
 
-		for (Vertex city = 1; city <= _num_vertices; city++) {
+		for (Vertex city = 1; city <= size(); city++) {
 			if (!visited[city]) {
 				_status = INSUFFICIENT;
 				break;
