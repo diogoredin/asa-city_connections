@@ -79,7 +79,7 @@ class Graph {
 		Status status()        const { return _status; }
 
 		/* Class functional methods */
-		void print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > &queue);
+		void print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue);
 		void connect(Vertex u, Vertex v, int cost) {
 			_edges.push(new_edge(u, v, cost));
 		}
@@ -140,10 +140,10 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 	}
 }
 
-void Graph::print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > &queue) {
+void Graph::print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue) {
 	int cost;
 	Vertex city_a, city_b;
-	/* WARNING: This DESTROYS the queue!!! */
+
 	for ( ; !queue.empty(); queue.pop() ) {
 		cost = queue.top().first;
 		city_a = queue.top().second.first;
