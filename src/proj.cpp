@@ -162,13 +162,12 @@ void Graph::min_span_tree(void) {
 	/* Shared variables */
 	int cost;
 	Vertex city_a, city_b;
-
-	/* MST has no airports */
 	struct {
 		int cost;
 		int num_roads, num_airports;
 	} roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
 
+	/* MST has no airports */
 	for ( Vertex city = 1; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
