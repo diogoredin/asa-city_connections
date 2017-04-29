@@ -76,8 +76,8 @@ class Graph {
 		size_t size()      const { return _num_vertices; }
 
 		/* Class functional methods */
-		void connect(Vertex u, Vertex v, int cost) {
-			_edges.push(new_edge(u, v, cost));
+		void connect(Vertex u, Vertex v, int city_cost) {
+			_edges.push(new_edge(u, v, city_cost));
 		}
 		void re_set() {
 			for ( Vertex city = 0; city <= size(); city++ ) {
@@ -152,7 +152,7 @@ void Graph::min_span_tree(
 	re_set(); /* Resetting Graph's ranks and parents */
 
 	for ( ; !edges.empty(); edges.pop() ) {
-		int cost = edges.top().first;
+		int city_cost = edges.top().first;
 		Vertex city_a = edges.top().second.first;
 		Vertex city_b = edges.top().second.second;
 
@@ -165,7 +165,7 @@ void Graph::min_span_tree(
 
 			merge_set(set_a, set_b);
 
-			roads.cost += cost;
+			roads.cost += city_cost;
 
 			if (visited != NULL) {
 				visited[city_b] = true;
