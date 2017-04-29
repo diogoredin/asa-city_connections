@@ -28,10 +28,7 @@ enum Status {
 };
 
 /* Kind */
-enum Connection {
-	ROADS = 0,
-	AIRPORTS
-};
+#define AIRPORT 0
 
 /******************** Data structures and their "methods" *********************/
 
@@ -43,22 +40,17 @@ Vertex new_vertex(int val) { return val; }
 typedef pair< int, pair<Vertex, Vertex> > Edge;
 
 /* Build Edge */
-Edge new_edge(Vertex city_a, Vertex city_b, int cost) { 
-	return make_pair(cost, make_pair(city_a, city_b)); 
+Edge new_edge(Vertex city_a, Vertex city_b, int cost) {
+	return make_pair(cost, make_pair(city_a, city_b));
 }
 
 /* Compare Edges */
-struct LesserEdge { // Returns true if edge_a comes after edge_b
+struct GreaterEdge { // Returns true if edge_a comes after edge_b
 	bool operator()(const Edge& edge_a, const Edge& edge_b) const {
 
-		/*if ( edge_a.first == edge_b.first ) {
-			if ( edge_a.second.second == 0 && edge_b.second.second != 0 ) {
-				return false;
-			}
-			if ( edge_a.second.second != 0 && edge_b.second.second == 0 ) {
-				return true;
-			}
-		}*/
+		if ( edge_a.first == edge_b.first ) {
+			return edge_a.second.first == AIRPORT;
+		}
 		return ( edge_a.first > edge_b.first );
 
 	}
@@ -72,12 +64,9 @@ class Graph {
 		int _total_cost;
 		int _final_roads, _final_airports;
 
-		priority_queue< Edge, vector<Edge>, LesserEdge > _roads;
-		priority_queue< Edge, vector<Edge>, LesserEdge > _airports;
+		priority_queue< Edge, vector<Edge>, GreaterEdge > _edges;
 		vector<int> _rank;
 		vector<Vertex> _parent;
-		vector<bool> _visited_air;
-		vector<bool> _visited_road;
 
 	public:
 		Graph(int num_vertices);
@@ -90,7 +79,10 @@ class Graph {
 		Status status()        const { return _status; }
 
 		/* Class functional methods */
-		void connect(Vertex u, Vertex v, int cost);
+		void print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > &queue);
+		void connect(Vertex u, Vertex v, int cost) {
+			_edges.push(new_edge(u, v, cost));
+		}
 		void make_set(Vertex u) {
 			_rank[u] = 0;
 			_parent[u] = u;
@@ -117,14 +109,11 @@ class Graph {
 
 		/* Algorithmic methods */
 		void min_span_tree();
-		void connect_remaining();
 };
 
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
 
-	_visited_air.resize(num_vertices + 1);
-	_visited_road.resize(num_vertices + 1);
 	_rank.resize(num_vertices + 1);
 	_parent.resize(num_vertices + 1);
 
@@ -136,17 +125,6 @@ Graph::Graph(int num_vertices) {
 
 }
 Graph::~Graph() { /* Nothing here */ }
-
-/* Adds Edge */
-void Graph::connect(Vertex u, Vertex v, int cost) {
-
-	if ( u == 0 ) {
-		_airports.push(new_edge(u, v, cost));
-	} else {
-		_roads.push(new_edge(u, v, cost));
-	}
-
-}
 
 /* Examines Graph */
 ostream& operator<<(ostream& os, const Graph &graph) {
@@ -162,53 +140,95 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 	}
 }
 
+void Graph::print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > &queue) {
+	int cost;
+	Vertex city_a, city_b;
+	/* WARNING: This DESTROYS the queue!!! */
+	for ( ; !queue.empty(); queue.pop() ) {
+		cost = queue.top().first;
+		city_a = queue.top().second.first;
+		city_b = queue.top().second.second;
+
+		cout << city_a << " <-- " << cost << " --> " << city_b << endl;
+	}
+}
+
 /* Generates a Minimum Spanning Tree */
 void Graph::min_span_tree(void) {
 
+	priority_queue< Edge, vector<Edge>, GreaterEdge > roads;
+
+	/* Shared variables */
+	int cost;
+	Vertex city_a, city_b;
+
+	/* MST has no airports */
+	int num_roads = 0;
+	int total_roads_cost = 0;
 	for ( Vertex city = 1; city < _num_vertices; city++ ) {
 		make_set(city);
 	}
 
-	while ( _roads.size() > 1 ) {
+	for ( ; _edges.size() > 1; _edges.pop() ) {
+		roads.push(_edges.top()); /* FIXME: Stop using this hack and clone the queue */
 
-		int cost = _roads.top().first;
-		int city_a = _roads.top().second.first;
-		int city_b = _roads.top().second.second;
+		cost = _edges.top().first;
+		city_a = _edges.top().second.first;
+		city_b = _edges.top().second.second;
+
+		if (city_a == AIRPORT) { continue; }
 
 		Vertex set_a = find_set(city_a);
 		Vertex set_b = find_set(city_b);
 
-		if ( set_a != set_b && !_visited_air[city_a] && !_visited_air[city_b]) {
+		if ( set_a != set_b ) {
 
 			merge_set(set_a, set_b);
-			_visited_road[city_a] = true;
-			_visited_road[city_b] = true;
 
-			_final_roads++;
-			_total_cost += cost;
+			num_roads++;
+			total_roads_cost += cost;
 
-		} _roads.pop();
+		}
+	}
+	roads.push(_edges.top()); /* Pushing final value */
 
+	/* MST has airports */
+	int num_edges = 0;
+	int num_airports = 0;
+	int total_edges_cost = 0;
+	for ( Vertex city = 0; city < _num_vertices; city++ ) {
+		make_set(city);
 	}
 
-}
+	for ( ; roads.size() > 1; roads.pop() ) {
+		cost = roads.top().first;
+		city_a = roads.top().second.first;
+		city_b = roads.top().second.second;
 
-void Graph::connect_remaining(void) {
+		Vertex set_a = find_set(city_a);
+		Vertex set_b = find_set(city_b);
 
-	while ( _airports.size() > 1 ) {
+		if ( set_a != set_b ) {
 
-		int cost = _airports.top().first;
-		int city = _airports.top().second.second;
+			merge_set(set_a, set_b);
 
-		if ( !_visited_road[city] && !_visited_air[city] ) {
-			
-			_visited_air[city] = true;
-			
-			_final_airports++;
-			_total_cost += cost;
+			if (city_a == AIRPORT) {
+				num_airports++;
+			} else {
+				num_edges++;
+			}
+			total_edges_cost += cost;
 
-		} _airports.pop();
-	
+		}
+	}
+
+	/* Taking road costs */
+	if (total_roads_cost <= total_edges_cost) {
+		_final_roads = num_roads;
+		_total_cost = total_roads_cost;
+	} else {
+		_final_roads = num_edges + num_airports;
+		_total_cost = total_edges_cost;
 	}
 
 }
@@ -226,7 +246,7 @@ int main(void) {
 	while ( num_airports-- > 0 ) {
 		int city, cost;
 		get_numbers(&city, &cost);
-		g.connect(0, city, cost);
+		g.connect(AIRPORT, city, cost);
 	}
 
 	/* Get Cost of each Road (city_a, city_b, cost) */
@@ -238,7 +258,6 @@ int main(void) {
 	}
 
 	/* Generate a Minimum Spanning Tree */
-	g.connect_remaining();
 	g.min_span_tree();
 
 	/* Define Graph Status */
