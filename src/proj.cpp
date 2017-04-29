@@ -193,7 +193,7 @@ void Graph::solve(void) {
 	min_span_tree(_edges, roads, visited);
 
 	/* MST has airports */
-	visited.resize(_num_vertices + 1);
+	visited = vector<bool>(_num_vertices + 1, false);
 	min_span_tree(_edges, roads_airports, visited);
 
 	/* Taking road costs */
