@@ -227,7 +227,8 @@ void Graph::min_span_tree(void) {
 		_final_roads = num_roads;
 		_total_cost = total_roads_cost;
 	} else {
-		_final_roads = num_edges + num_airports;
+		_final_roads = num_edges;
+		_final_airports = num_airports;
 		_total_cost = total_edges_cost;
 	}
 
