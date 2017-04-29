@@ -195,6 +195,7 @@ void Graph::min_span_tree(void) {
 	}
 
 	/* MST has airports */
+	vector<bool> visited(_num_vertices + 1);
 	for ( Vertex city = 0; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
@@ -211,9 +212,11 @@ void Graph::min_span_tree(void) {
 
 			merge_set(set_a, set_b);
 
+			visited[city_b] = true;
 			if (city_a == AIRPORT) {
 				roads_airports.num_airports++;
 			} else {
+				visited[city_a];
 				roads_airports.num_roads++;
 			}
 			roads_airports.cost += cost;
@@ -222,10 +225,21 @@ void Graph::min_span_tree(void) {
 	}
 
 	/* Taking road costs */
-	if (roads.cost <= roads_airports.cost) {
-		_final_roads = roads.num_roads;
-		_total_cost = roads.cost;
+	if (roads.num_roads == (int) _num_vertices-1) {
+		if (roads.cost <= roads_airports.cost) {
+			_final_roads = roads.num_roads;
+			_total_cost = roads.cost;
+		} else {
+			_final_roads = roads_airports.num_roads;
+			_final_airports = roads_airports.num_airports;
+			_total_cost = roads_airports.cost;
+		}
 	} else {
+		for (Vertex city = 1; city <= _num_vertices; city++) {
+			if (!visited[city]) {
+				_status = INSUFFICIENT;
+			}
+		}
 		_final_roads = roads_airports.num_roads;
 		_final_airports = roads_airports.num_airports;
 		_total_cost = roads_airports.cost;
