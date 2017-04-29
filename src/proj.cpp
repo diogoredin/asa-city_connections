@@ -87,12 +87,10 @@ class Graph {
 			_rank[u] = 0;
 			_parent[u] = u;
 		}
-
 		Vertex find_set(Vertex u) {
 			if (u != _parent[u]) { _parent[u] = find_set(_parent[u]); }
 			return _parent[u];
 		}
-
 		void merge_set(Vertex u, Vertex v) {
 			if (u == v) { return; }
 
