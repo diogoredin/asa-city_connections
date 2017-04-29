@@ -42,7 +42,7 @@ typedef struct {
 } Budget;
 
 /* Compare Edges */
-struct GreaterEdge { // Returns true if edge_a comes after edge_b
+struct GreaterEdge {
 	bool operator()(const Edge& edge_a, const Edge& edge_b) const {
 
 		if ( edge_a.first == edge_b.first ) {
@@ -78,6 +78,11 @@ class Graph {
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int cost) {
 			_edges.push(new_edge(u, v, cost));
+		}
+		void re_set() {
+			for ( Vertex city = 0; city <= size(); city++ ) {
+				make_set(city);
+			}
 		}
 		void make_set(Vertex u) {
 			_rank[u] = 0;
@@ -144,9 +149,7 @@ void Graph::min_span_tree(void) {
 	Budget roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
 
 	/* MST has no airports */
-	for ( Vertex city = 1; city <= _num_vertices; city++ ) {
-		make_set(city);
-	}
+	re_set();
 
 	for ( ; !_edges.empty(); _edges.pop() ) {
 		edges2.push(_edges.top());
@@ -172,9 +175,7 @@ void Graph::min_span_tree(void) {
 
 	/* MST has airports */
 	bool *visited = new bool[_num_vertices + 1];
-	for ( Vertex city = 0; city <= _num_vertices; city++ ) {
-		make_set(city);
-	}
+	re_set();
 
 	for ( ; !edges2.empty(); edges2.pop() ) {
 		cost = edges2.top().first;
@@ -207,13 +208,13 @@ void Graph::min_span_tree(void) {
 			_budget = roads_airports;
 		}
 	} else {
+		_budget = roads_airports;
 		for (Vertex city = 1; city <= _num_vertices; city++) {
 			if (!visited[city]) {
 				_status = INSUFFICIENT;
 				break;
 			}
 		}
-		_budget = roads_airports;
 	}
 
 	/* Cleaning up */
