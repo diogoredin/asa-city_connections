@@ -165,7 +165,7 @@ void Graph::min_span_tree(void) {
 	/* MST has no airports */
 	int num_roads = 0;
 	int total_roads_cost = 0;
-	for ( Vertex city = 1; city < _num_vertices; city++ ) {
+	for ( Vertex city = 1; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
 
@@ -196,7 +196,7 @@ void Graph::min_span_tree(void) {
 	int num_edges = 0;
 	int num_airports = 0;
 	int total_edges_cost = 0;
-	for ( Vertex city = 0; city < _num_vertices; city++ ) {
+	for ( Vertex city = 0; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
 
