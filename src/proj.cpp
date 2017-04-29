@@ -120,7 +120,6 @@ Graph::Graph(int num_vertices) {
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
-	_edges.reserve(_num_vertices+1);
 
 }
 Graph::~Graph() {
@@ -194,11 +193,11 @@ void Graph::solve(void) {
 	min_span_tree(_edges, roads, visited);
 
 	/* MST has airports */
-	visited = vector<bool>(_num_vertices + 1, false);
+	visited = vector<bool>(size() + 1, false);
 	min_span_tree(_edges, roads_airports, visited);
 
 	/* Taking road costs */
-	if (roads.num_roads == (int) _num_vertices-1) {
+	if (roads.num_roads == (int) size()-1) {
 		_budget = (roads.cost <= roads_airports.cost) ? roads : roads_airports;
 	} else {
 		_budget = roads_airports;
