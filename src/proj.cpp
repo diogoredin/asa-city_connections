@@ -50,6 +50,7 @@ class Graph {
 		priority_queue< Edge, vector<Edge>, greater<Edge> > _roads;
 		priority_queue< Edge, vector<Edge>, greater<Edge> > _airports;
 		vector<int> _rank;
+		vector<bool> _visited;
 		vector<Vertex> _parent;
 
 	public:
@@ -98,6 +99,7 @@ Graph::Graph(int num_vertices) {
 
 	_rank.resize(num_vertices + 1);
 	_parent.resize(num_vertices + 1);
+	_visited.resize(num_vertices + 1);
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
@@ -135,34 +137,33 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 
 /* Generates a Minimum Spanning Tree */
 void Graph::min_span_tree() {
-	vector<bool> visited(_num_vertices + 1);
 
 	for ( Vertex city = 1; city < _num_vertices; city++ ) {
 		make_set(city);
 	}
 
-	while ( !_roads.empty() || !_airports.empty() ) {
+	while ( _roads.size() > 0 || _airports.size() > 0 ) {
 
 		int cost_airport = 1000;
 		int cost_road = 1000;
-		Vertex city_a = 0;
-		Vertex city_b = 0;
-		Vertex city_c = 0;
+		int city_a = 0;
+		int city_b = 0;
+		int city_c = 0;
 
-		if ( !_roads.empty() ) {
+		if ( _roads.size() > 0 ) {
 			city_a = _roads.top().second.first;
 			city_b = _roads.top().second.second;
 			cost_road = _roads.top().first;
-			if ( visited[city_a] ) { _roads.pop(); continue; }
+			if ( _visited[city_a] ) { _roads.pop(); continue; }
 		}
 
-		if ( !_airports.empty() ) {
+		if ( _airports.size() > 0 ) {
 			city_c = _airports.top().second.second;
 			cost_airport = _airports.top().first;
-			if ( visited[city_c] ) { _airports.pop(); continue; }
+			if ( _visited[city_c] ) { _airports.pop(); continue; }
 		}
 
-		if ( cost_road <= cost_airport ) {
+		if ( cost_road < cost_airport || cost_road == cost_airport ) {
 
 			Vertex set_a = find_set(city_a);
 			Vertex set_b = find_set(city_b);
@@ -173,7 +174,7 @@ void Graph::min_span_tree() {
 				_final_roads++;
 				_total_cost += cost_road;
 
-				visited[city_a] = true;
+				_visited[city_a] = true;
 			}
 
 			_roads.pop();
@@ -185,7 +186,7 @@ void Graph::min_span_tree() {
 			_final_airports++;
 			_total_cost += cost_airport;
 
-			visited[city_c] = true;
+			_visited[city_c] = true;
 			_airports.pop();
 		}
 
