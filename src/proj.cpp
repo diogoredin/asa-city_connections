@@ -217,6 +217,7 @@ void Graph::min_span_tree(void) {
 		for (Vertex city = 1; city <= _num_vertices; city++) {
 			if (!visited[city]) {
 				_status = INSUFFICIENT;
+				break;
 			}
 		}
 		_budget = roads_airports;
@@ -252,11 +253,6 @@ int main(void) {
 
 	/* Generate a Minimum Spanning Tree */
 	g.min_span_tree();
-
-	/* Define Graph Status */
-	//if ( g.num_roads() + g.num_airports() != (int) _num_vertices-1 ) {
-		//_status = INSUFFICIENT;
-	//}
 
 	cout << g << endl;
 
