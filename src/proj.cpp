@@ -27,6 +27,12 @@ enum Status {
 	INSUFFICIENT
 };
 
+/* Kind */
+enum Connection {
+	ROADS = 0,
+	AIRPORTS
+};
+
 /******************** Data structures and their "methods" *********************/
 
 /* Vertex structure */
@@ -35,9 +41,28 @@ Vertex new_vertex(int val) { return val; }
 
 /* Edge Structure */
 typedef pair< int, pair<Vertex, Vertex> > Edge;
-Edge new_edge(Vertex city_a, Vertex city_b, int cost) {
-	return make_pair(cost, make_pair(city_a, city_b));
+
+/* Build Edge */
+Edge new_edge(Vertex city_a, Vertex city_b, int cost) { 
+	return make_pair(cost, make_pair(city_a, city_b)); 
 }
+
+/* Compare Edges */
+struct LesserEdge { // Returns true if edge_a comes after edge_b
+	bool operator()(const Edge& edge_a, const Edge& edge_b) const {
+
+		/*if ( edge_a.first == edge_b.first ) {
+			if ( edge_a.second.second == 0 && edge_b.second.second != 0 ) {
+				return false;
+			}
+			if ( edge_a.second.second != 0 && edge_b.second.second == 0 ) {
+				return true;
+			}
+		}*/
+		return ( edge_a.first > edge_b.first );
+
+	}
+};
 
 /* Graph Structure */
 class Graph {
@@ -47,22 +72,22 @@ class Graph {
 		int _total_cost;
 		int _final_roads, _final_airports;
 
-		priority_queue< Edge, vector<Edge>, greater<Edge> > _roads;
-		priority_queue< Edge, vector<Edge>, greater<Edge> > _airports;
+		priority_queue< Edge, vector<Edge>, LesserEdge > _roads;
+		priority_queue< Edge, vector<Edge>, LesserEdge > _airports;
 		vector<int> _rank;
-		vector<bool> _visited;
 		vector<Vertex> _parent;
+		vector<bool> _visited_air;
+		vector<bool> _visited_road;
 
 	public:
 		Graph(int num_vertices);
 		~Graph();
 
 		/* Class attribute methods */
-		int cost()         const { return _total_cost; }
-		int num_roads()    const { return _final_roads; }
-		int num_airports() const { return _final_airports; }
-		size_t size()      const { return _roads.size(); }
-		Status status()    const { return _status; }
+		int cost()             const { return _total_cost; }
+		int num_roads()        const { return _final_roads; }
+		int num_airports()     const { return _final_airports; }
+		Status status()        const { return _status; }
 
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int cost);
@@ -83,7 +108,7 @@ class Graph {
 			else if (_rank[u] > _rank[v]) { _parent[v] = u; }
 			else {
 				_parent[v] = u;
-	         	_rank[u]++;
+				_rank[u]++;
 			}
 		}
 
@@ -92,14 +117,16 @@ class Graph {
 
 		/* Algorithmic methods */
 		void min_span_tree();
+		void connect_remaining();
 };
 
 /* Builds Graph */
 Graph::Graph(int num_vertices) {
 
+	_visited_air.resize(num_vertices + 1);
+	_visited_road.resize(num_vertices + 1);
 	_rank.resize(num_vertices + 1);
 	_parent.resize(num_vertices + 1);
-	_visited.resize(num_vertices + 1);
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
@@ -113,10 +140,10 @@ Graph::~Graph() { /* Nothing here */ }
 /* Adds Edge */
 void Graph::connect(Vertex u, Vertex v, int cost) {
 
-	if ( u != 0 ) {
-		_roads.push(new_edge(u, v, cost));
-	} else {
+	if ( u == 0 ) {
 		_airports.push(new_edge(u, v, cost));
+	} else {
+		_roads.push(new_edge(u, v, cost));
 	}
 
 }
@@ -136,65 +163,52 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 }
 
 /* Generates a Minimum Spanning Tree */
-void Graph::min_span_tree() {
+void Graph::min_span_tree(void) {
 
 	for ( Vertex city = 1; city < _num_vertices; city++ ) {
 		make_set(city);
 	}
 
-	while ( _roads.size() > 0 || _airports.size() > 0 ) {
+	while ( _roads.size() > 1 ) {
 
-		int cost_airport = 1000;
-		int cost_road = 1000;
-		int city_a = 0;
-		int city_b = 0;
-		int city_c = 0;
+		int cost = _roads.top().first;
+		int city_a = _roads.top().second.first;
+		int city_b = _roads.top().second.second;
 
-		if ( _roads.size() > 0 ) {
-			city_a = _roads.top().second.first;
-			city_b = _roads.top().second.second;
-			cost_road = _roads.top().first;
-			if ( _visited[city_a] ) { _roads.pop(); continue; }
-		}
+		Vertex set_a = find_set(city_a);
+		Vertex set_b = find_set(city_b);
 
-		if ( _airports.size() > 0 ) {
-			city_c = _airports.top().second.second;
-			cost_airport = _airports.top().first;
-			if ( _visited[city_c] ) { _airports.pop(); continue; }
-		}
+		if ( set_a != set_b && !_visited_air[city_a] && !_visited_air[city_b]) {
 
-		if ( cost_road < cost_airport || cost_road == cost_airport ) {
+			merge_set(set_a, set_b);
+			_visited_road[city_a] = true;
+			_visited_road[city_b] = true;
 
-			Vertex set_a = find_set(city_a);
-			Vertex set_b = find_set(city_b);
+			_final_roads++;
+			_total_cost += cost;
 
-			if ( set_a != set_b ) {
-				merge_set(set_a, set_b);
-
-				_final_roads++;
-				_total_cost += cost_road;
-
-				_visited[city_a] = true;
-			}
-
-			_roads.pop();
-
-		}
-
-		if ( cost_airport < cost_road ) {
-
-			_final_airports++;
-			_total_cost += cost_airport;
-
-			_visited[city_c] = true;
-			_airports.pop();
-		}
+		} _roads.pop();
 
 	}
 
-	/* Define Graph Status */
-	if ( _final_airports + _final_roads != (int) _num_vertices-1 ) {
-		//_status = INSUFFICIENT;
+}
+
+void Graph::connect_remaining(void) {
+
+	while ( _airports.size() > 1 ) {
+
+		int cost = _airports.top().first;
+		int city = _airports.top().second.second;
+
+		if ( !_visited_road[city] && !_visited_air[city] ) {
+			
+			_visited_air[city] = true;
+			
+			_final_airports++;
+			_total_cost += cost;
+
+		} _airports.pop();
+	
 	}
 
 }
@@ -224,7 +238,14 @@ int main(void) {
 	}
 
 	/* Generate a Minimum Spanning Tree */
+	g.connect_remaining();
 	g.min_span_tree();
+
+	/* Define Graph Status */
+	//if ( g.num_roads() + g.num_airports() != (int) _num_vertices-1 ) {
+		//_status = INSUFFICIENT;
+	//}
+
 	cout << g << endl;
 
 	return 0;
