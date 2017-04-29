@@ -4,22 +4,15 @@
 *******************************************************************************/
 
 /* Libraries. Only the bare minimum, no need for clutter */
-#include <stdio.h>
 #include <iostream>
 #include <queue>
 
 using namespace std;
 
 /****************************** auxy functions *********************************/
-void get_numbers(int *a) {
-	scanf("%d", a);
-}
-void get_numbers(int *a, int *b) {
-	scanf("%d %d", a, b);
-}
-void get_numbers(int *a, int *b, int *c) {
-	scanf("%d %d %d", a, b, c);
-}
+void get_numbers(int &a) { cin >> a; }
+void get_numbers(int &a, int &b) { cin >> a >> b; }
+void get_numbers(int &a, int &b, int &c) { cin >> a >> b >> c; }
 
 /* Status */
 enum Status {
@@ -232,22 +225,22 @@ int main(void) {
 	int num_cities, num_airports, num_roads;
 
 	/* Get number of Cities */
-	get_numbers(&num_cities);
+	get_numbers(num_cities);
 	Graph g(num_cities);
 
 	/* Get Cost of each Airport (city, cost) */
-	get_numbers(&num_airports);
+	get_numbers(num_airports);
 	while ( num_airports-- > 0 ) {
 		int city, cost;
-		get_numbers(&city, &cost);
+		get_numbers(city, cost);
 		g.connect(AIRPORT, city, cost);
 	}
 
 	/* Get Cost of each Road (city_a, city_b, cost) */
-	get_numbers(&num_roads);
+	get_numbers(num_roads);
 	while ( num_roads-- > 0 ) {
 		int city_a, city_b, cost;
-		get_numbers(&city_a, &city_b, &cost);
+		get_numbers(city_a, city_b, cost);
 		g.connect(city_a, city_b, cost);
 	}
 
