@@ -80,7 +80,6 @@ class Graph {
 		size_t size()      const { return _num_vertices; }
 
 		/* Class functional methods */
-		void print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue);
 		void connect(Vertex u, Vertex v, int cost) {
 			_edges.push(new_edge(u, v, cost));
 		}
@@ -134,23 +133,9 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 			return os << "Insuficiente";
 
 		default: {
-			os << "Total Cost : " << graph.cost() << endl;
-			os << "Airports : " << graph.num_airports() << endl;
-			return os << "Roads : " << graph.num_roads();
+			os << graph.cost() << endl;
+			return os << graph.num_airports() << " " << graph.num_roads();
 		}
-	}
-}
-
-void Graph::print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue) {
-	int cost;
-	Vertex city_a, city_b;
-
-	for ( ; !queue.empty(); queue.pop() ) {
-		cost = queue.top().first;
-		city_a = queue.top().second.first;
-		city_b = queue.top().second.second;
-
-		cout << city_a << " <-- " << cost << " --> " << city_b << endl;
 	}
 }
 
