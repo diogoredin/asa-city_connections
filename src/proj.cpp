@@ -120,6 +120,7 @@ Graph::Graph(int num_vertices) {
 
 	_status = CORRECT;
 	_num_vertices = num_vertices;
+	_edges.reserve(_num_vertices+1);
 
 }
 Graph::~Graph() {
