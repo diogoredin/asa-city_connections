@@ -5,7 +5,8 @@
 
 /* Libraries. Only the bare minimum, no need for clutter */
 #include <iostream>
-#include <queue>
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -42,16 +43,16 @@ typedef struct {
 } Budget;
 
 /* Compare Edges */
-struct GreaterEdge {
+struct LowerEdge {
 	bool operator()(const Edge& edge_a, const Edge& edge_b) const {
 
 		if ( edge_a.first == edge_b.first ) {
-			return edge_a.second.first == AIRPORT;
+			return edge_a.second.first != AIRPORT;
 		}
-		return ( edge_a.first > edge_b.first );
+		return ( edge_a.first < edge_b.first );
 
 	}
-};
+} lower_edge;
 
 /* Graph Structure */
 class Graph {
@@ -60,7 +61,7 @@ class Graph {
 		size_t _num_vertices;
 		Budget _budget;
 
-		priority_queue< Edge, vector<Edge>, GreaterEdge > _edges;
+		vector<Edge> _edges;
 		int *_rank;
 		Vertex *_parent;
 
@@ -77,7 +78,7 @@ class Graph {
 
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int city_cost) {
-			_edges.push(new_edge(u, v, city_cost));
+			_edges.push_back(new_edge(u, v, city_cost));
 		}
 		void re_set() {
 			for ( Vertex city = 0; city <= size(); city++ ) {
@@ -107,11 +108,7 @@ class Graph {
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Algorithmic methods */
-		void min_span_tree(
-			priority_queue< Edge, vector<Edge>, GreaterEdge > edges,
-			Budget &roads,
-			bool *visited
-		);
+		void min_span_tree(vector<Edge> edges, Budget &roads, bool *visited);
 		void solve();
 };
 
@@ -145,16 +142,17 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 
 /* Generates a Minimum Spanning Tree */
 void Graph::min_span_tree(
-	priority_queue< Edge, vector<Edge>, GreaterEdge > edges,
+	vector<Edge> edges,
 	Budget &roads,
 	bool *visited = NULL
 ) {
 	re_set(); /* Resetting Graph's ranks and parents */
 
-	for ( ; !edges.empty(); edges.pop() ) {
-		int city_cost = edges.top().first;
-		Vertex city_a = edges.top().second.first;
-		Vertex city_b = edges.top().second.second;
+	vector<Edge>::const_iterator it;
+	for ( it = edges.begin() ; it != edges.end(); it++ ) {
+		int city_cost = (*it).first;
+		Vertex city_a = (*it).second.first;
+		Vertex city_b = (*it).second.second;
 
 		if (visited == NULL && city_a == AIRPORT) { continue; }
 
@@ -186,6 +184,9 @@ void Graph::solve(void) {
 
 	/* Shared variables */
 	Budget roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
+
+	/* Sorting our vector ONCE */
+	sort(_edges.begin(), _edges.end(), lower_edge);
 
 	/* MST has no airports */
 	min_span_tree(_edges, roads);
