@@ -108,7 +108,7 @@ class Graph {
 		friend ostream& operator<<(ostream& os, const Graph &graph);
 
 		/* Algorithmic methods */
-		void min_span_tree(vector<Edge> edges, Budget &roads, bool *visited);
+		void min_span_tree(vector<Edge> edges, Budget &roads, vector<bool> &visited);
 		void solve();
 };
 
@@ -144,7 +144,7 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 void Graph::min_span_tree(
 	vector<Edge> edges,
 	Budget &roads,
-	bool *visited = NULL
+	vector<bool> &visited
 ) {
 	re_set(); /* Resetting Graph's ranks and parents */
 
@@ -154,7 +154,7 @@ void Graph::min_span_tree(
 		Vertex city_a = (*it).second.first;
 		Vertex city_b = (*it).second.second;
 
-		if (visited == NULL && city_a == AIRPORT) { continue; }
+		if (visited.empty() && city_a == AIRPORT) { continue; }
 
 		Vertex set_a = find_set(city_a);
 		Vertex set_b = find_set(city_b);
@@ -165,7 +165,7 @@ void Graph::min_span_tree(
 
 			roads.cost += city_cost;
 
-			if (visited != NULL) {
+			if (!visited.empty()) {
 				visited[city_b] = true;
 				if (city_a != AIRPORT) {
 					roads.num_roads++;
@@ -183,16 +183,17 @@ void Graph::min_span_tree(
 void Graph::solve(void) {
 
 	/* Shared variables */
+	vector<bool> visited;
 	Budget roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
 
 	/* Sorting our vector ONCE */
 	sort(_edges.begin(), _edges.end(), lower_edge);
 
 	/* MST has no airports */
-	min_span_tree(_edges, roads);
+	min_span_tree(_edges, roads, visited);
 
 	/* MST has airports */
-	bool *visited = new bool[_num_vertices + 1];
+	visited.resize(_num_vertices + 1);
 	min_span_tree(_edges, roads_airports, visited);
 
 	/* Taking road costs */
@@ -208,9 +209,6 @@ void Graph::solve(void) {
 			}
 		}
 	}
-
-	/* Cleaning up */
-	delete [] visited;
 }
 
 /***************************** MAIN function **********************************/
