@@ -169,7 +169,7 @@ void Graph::min_span_tree(void) {
 		make_set(city);
 	}
 
-	for ( ; _edges.size() > 1; _edges.pop() ) {
+	for ( ; !_edges.empty(); _edges.pop() ) {
 		roads.push(_edges.top()); /* FIXME: Stop using this hack and clone the queue */
 
 		cost = _edges.top().first;
@@ -190,7 +190,6 @@ void Graph::min_span_tree(void) {
 
 		}
 	}
-	roads.push(_edges.top()); /* Pushing final value */
 
 	/* MST has airports */
 	int num_edges = 0;
@@ -200,7 +199,7 @@ void Graph::min_span_tree(void) {
 		make_set(city);
 	}
 
-	for ( ; roads.size() > 1; roads.pop() ) {
+	for ( ; !roads.empty(); roads.pop() ) {
 		cost = roads.top().first;
 		city_a = roads.top().second.first;
 		city_b = roads.top().second.second;
