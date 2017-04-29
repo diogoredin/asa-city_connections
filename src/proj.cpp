@@ -157,21 +157,24 @@ void Graph::print_queue(priority_queue< Edge, vector<Edge>, GreaterEdge > queue)
 /* Generates a Minimum Spanning Tree */
 void Graph::min_span_tree(void) {
 
-	priority_queue< Edge, vector<Edge>, GreaterEdge > roads;
+	priority_queue< Edge, vector<Edge>, GreaterEdge > edges2;
 
 	/* Shared variables */
 	int cost;
 	Vertex city_a, city_b;
 
 	/* MST has no airports */
-	int num_roads = 0;
-	int total_roads_cost = 0;
+	struct {
+		int cost;
+		int num_roads, num_airports;
+	} roads = { 0, 0, 0 }, roads_airports = { 0, 0, 0 };
+
 	for ( Vertex city = 1; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
 
 	for ( ; !_edges.empty(); _edges.pop() ) {
-		roads.push(_edges.top()); /* FIXME: Stop using this hack and clone the queue */
+		edges2.push(_edges.top()); /* FIXME: Stop using this hack and clone the queue */
 
 		cost = _edges.top().first;
 		city_a = _edges.top().second.first;
@@ -186,24 +189,21 @@ void Graph::min_span_tree(void) {
 
 			merge_set(set_a, set_b);
 
-			num_roads++;
-			total_roads_cost += cost;
+			roads.num_roads++;
+			roads.cost += cost;
 
 		}
 	}
 
 	/* MST has airports */
-	int num_edges = 0;
-	int num_airports = 0;
-	int total_edges_cost = 0;
 	for ( Vertex city = 0; city <= _num_vertices; city++ ) {
 		make_set(city);
 	}
 
-	for ( ; !roads.empty(); roads.pop() ) {
-		cost = roads.top().first;
-		city_a = roads.top().second.first;
-		city_b = roads.top().second.second;
+	for ( ; !edges2.empty(); edges2.pop() ) {
+		cost = edges2.top().first;
+		city_a = edges2.top().second.first;
+		city_b = edges2.top().second.second;
 
 		Vertex set_a = find_set(city_a);
 		Vertex set_b = find_set(city_b);
@@ -213,23 +213,23 @@ void Graph::min_span_tree(void) {
 			merge_set(set_a, set_b);
 
 			if (city_a == AIRPORT) {
-				num_airports++;
+				roads_airports.num_airports++;
 			} else {
-				num_edges++;
+				roads_airports.num_roads++;
 			}
-			total_edges_cost += cost;
+			roads_airports.cost += cost;
 
 		}
 	}
 
 	/* Taking road costs */
-	if (total_roads_cost <= total_edges_cost) {
-		_final_roads = num_roads;
-		_total_cost = total_roads_cost;
+	if (roads.cost <= roads_airports.cost) {
+		_final_roads = roads.num_roads;
+		_total_cost = roads.cost;
 	} else {
-		_final_roads = num_edges;
-		_final_airports = num_airports;
-		_total_cost = total_edges_cost;
+		_final_roads = roads_airports.num_roads;
+		_final_airports = roads_airports.num_airports;
+		_total_cost = roads_airports.cost;
 	}
 
 }
