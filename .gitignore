@@ -1,6 +1,12 @@
 # Specific files
 bld/*proj*
 
+# Document files
+*.doc*
+*.xls*
+*.ppt*
+*.pages*
+
 # Test files
 *.outhyp
 *.diff
