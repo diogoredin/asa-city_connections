@@ -12,9 +12,9 @@
 using namespace std;
 
 /****************************** auxy functions *********************************/
-void get_numbers(int &a) { cin >> a; }
-void get_numbers(int &a, int &b) { cin >> a >> b; }
-void get_numbers(int &a, int &b, int &c) { cin >> a >> b >> c; }
+void get_numbers(size_t &a) { cin >> a; }
+void get_numbers(size_t &a, size_t &b) { cin >> a >> b; }
+void get_numbers(size_t &a, size_t &b, size_t &c) { cin >> a >> b >> c; }
 
 /* Status */
 enum Status {
@@ -148,7 +148,7 @@ void Graph::min_span_tree(Budget &roads, vector<bool> &visited) {
 
 	vector<Edge>::const_iterator it;
 	for ( it = _edges.begin() ; it != _edges.end(); it++ ) {
-		int city_cost = (*it).first;
+		size_t city_cost = (*it).first;
 		Vertex city_a = (*it).second.first;
 		Vertex city_b = (*it).second.second;
 
@@ -212,11 +212,12 @@ void Graph::solve(void) {
 /***************************** MAIN function **********************************/
 using namespace std::chrono;
 int main(void) {
-	int num_cities, num_airports, num_roads;
+	size_t num_cities, num_airports, num_roads;
 	high_resolution_clock::time_point start, stop;
 	duration<double> t_insert, t_solve;
 
 	start = high_resolution_clock::now();
+
 	/* Get number of Cities */
 	get_numbers(num_cities);
 	Graph g(num_cities);
@@ -225,7 +226,7 @@ int main(void) {
 	get_numbers(num_airports);
 	g.reserve(num_airports);
 	while ( num_airports-- > 0 ) {
-		int city, cost;
+		size_t city, cost;
 		get_numbers(city, cost);
 		g.connect(AIRPORT, city, cost);
 	}
@@ -234,7 +235,7 @@ int main(void) {
 	get_numbers(num_roads);
 	g.reserve(num_airports + num_roads);
 	while ( num_roads-- > 0 ) {
-		int city_a, city_b, cost;
+		size_t city_a, city_b, cost;
 		get_numbers(city_a, city_b, cost);
 		g.connect(city_a, city_b, cost);
 	}
