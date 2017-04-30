@@ -38,8 +38,8 @@ Edge new_edge(Vertex city_a, Vertex city_b, int cost) {
 
 /* Project Budget Structure */
 typedef struct {
-	int cost;
-	int num_roads, num_airports;
+	size_t cost;
+	size_t num_roads, num_airports;
 } Budget;
 
 /* Compare Edges */
@@ -70,12 +70,12 @@ class Graph {
 		~Graph();
 
 		/* Class attribute methods */
-		int cost()          const { return _budget.cost; }
-		int num_roads()     const { return _budget.num_roads; }
-		int num_airports()  const { return _budget.num_airports; }
-		void reserve(size_t val)  { _edges.reserve(val); }
-		size_t size()       const { return _num_vertices; }
-		Status status()     const { return _status; }
+		size_t cost()         const { return _budget.cost; }
+		size_t num_roads()    const { return _budget.num_roads; }
+		size_t num_airports() const { return _budget.num_airports; }
+		void reserve(size_t val)    { _edges.reserve(val); }
+		size_t size()         const { return _num_vertices; }
+		Status status()       const { return _status; }
 
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int city_cost) {
@@ -194,7 +194,7 @@ void Graph::solve(void) {
 	min_span_tree(roads_airports, visited);
 
 	/* Taking road costs */
-	if (roads.num_roads == (int) size()-1) {
+	if (roads.num_roads == size()-1) {
 		_budget = (roads.cost <= roads_airports.cost) ? roads : roads_airports;
 	} else {
 		_budget = roads_airports;
