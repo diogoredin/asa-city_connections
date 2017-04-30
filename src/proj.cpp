@@ -70,11 +70,12 @@ class Graph {
 		~Graph();
 
 		/* Class attribute methods */
-		int cost()         const { return _budget.cost; }
-		int num_roads()    const { return _budget.num_roads; }
-		int num_airports() const { return _budget.num_airports; }
-		Status status()    const { return _status; }
-		size_t size()      const { return _num_vertices; }
+		int cost()          const { return _budget.cost; }
+		int num_roads()     const { return _budget.num_roads; }
+		int num_airports()  const { return _budget.num_airports; }
+		void reserve(size_t val)  { _edges.reserve(val); }
+		size_t size()       const { return _num_vertices; }
+		Status status()     const { return _status; }
 
 		/* Class functional methods */
 		void connect(Vertex u, Vertex v, int city_cost) {
@@ -217,6 +218,7 @@ int main(void) {
 
 	/* Get Cost of each Airport (city, cost) */
 	get_numbers(num_airports);
+	g.reserve(num_airports);
 	while ( num_airports-- > 0 ) {
 		int city, cost;
 		get_numbers(city, cost);
@@ -225,6 +227,7 @@ int main(void) {
 
 	/* Get Cost of each Road (city_a, city_b, cost) */
 	get_numbers(num_roads);
+	g.reserve(num_airports + num_roads);
 	while ( num_roads-- > 0 ) {
 		int city_a, city_b, cost;
 		get_numbers(city_a, city_b, cost);
