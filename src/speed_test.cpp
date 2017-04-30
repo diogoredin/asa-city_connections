@@ -29,11 +29,11 @@ enum Status {
 
 /* Vertex structure */
 typedef size_t Vertex;
-Vertex new_vertex(int val) { return val; }
+Vertex new_vertex(size_t val) { return val; }
 
 /* Edge Structure */
-typedef pair< int, pair<Vertex, Vertex> > Edge;
-Edge new_edge(Vertex city_a, Vertex city_b, int cost) {
+typedef pair< size_t, pair<Vertex, Vertex> > Edge;
+Edge new_edge(Vertex city_a, Vertex city_b, size_t cost) {
 	return make_pair(cost, make_pair(city_a, city_b));
 }
 
