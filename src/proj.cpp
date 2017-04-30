@@ -46,10 +46,10 @@ typedef struct {
 struct LowerEdge {
 	bool operator()(const Edge& edge_a, const Edge& edge_b) const {
 
-		if ( edge_a.first == edge_b.first ) {
-			return edge_a.second.first != AIRPORT;
-		}
-		return ( edge_a.first < edge_b.first );
+		if (edge_a.first < edge_b.first) { return true; }
+		if (edge_a.first > edge_b.first) { return false; }
+		if (edge_a.second.first > edge_b.second.first) { return true; }
+		return false;
 
 	}
 } lower_edge;
