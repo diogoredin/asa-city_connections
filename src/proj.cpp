@@ -142,7 +142,7 @@ ostream& operator<<(ostream& os, const Graph &graph) {
 }
 
 /* Generates a Minimum Spanning Tree */
-void Graph::min_span_tree(Budget &roads, vector<bool> &visited) {
+void Graph::min_span_tree(Budget &budget, vector<bool> &visited) {
 	re_set(); /* Resetting Graph's ranks and parents */
 
 	vector<Edge>::const_iterator it;
@@ -160,17 +160,17 @@ void Graph::min_span_tree(Budget &roads, vector<bool> &visited) {
 
 			merge_set(set_a, set_b);
 
-			roads.cost += city_cost;
+			budget.cost += city_cost;
 
 			if (!visited.empty()) {
 				visited[city_b] = true;
 				if (city_a != AIRPORT) {
-					roads.num_roads++;
+					budget.num_roads++;
 				} else {
-					roads.num_airports++;
+					budget.num_airports++;
 				}
 			} else {
-				roads.num_roads++;
+				budget.num_roads++;
 			}
 
 		}
