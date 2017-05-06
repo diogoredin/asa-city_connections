@@ -3,6 +3,7 @@ SRCDIR = src
 OBJDIR = bld
 
 # Compilers
+CC ?= gcc
 CXX ?= g++
 
 # Shared compilation flags
@@ -22,7 +23,8 @@ CXFLAGS = $(CFLAGS)
 
 # Executables
 EXEC_PROJ = $(OBJDIR)/proj
-EXECS = $(EXEC_PROJ)
+EXEC_PROJPP = $(OBJDIR)/projpp
+EXECS = $(EXEC_PROJ) $(EXEC_PROJPP)
 
 # General rules (point to main focus files)
 all: proj
@@ -31,10 +33,13 @@ clean:
 	rm -rf $(EXECS) $(OBJDIR)/*.o $(OBJDIR)/*.dSYM
 
 # Specific rules
-proj: $(EXEC_PROJ)
+proj: $(EXEC_PROJPP)
 
 # Compilation rules
-$(EXEC_PROJ): $(SRCDIR)/proj.cpp
+$(EXEC_PROJ): $(SRCDIR)/proj.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(EXEC_PROJPP): $(SRCDIR)/proj.cpp
 	$(CXX) $(CXFLAGS) $^ -o $@
 
 .PHONY: all clean
